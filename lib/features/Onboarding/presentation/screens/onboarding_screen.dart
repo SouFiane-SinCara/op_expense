@@ -2,14 +2,17 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:op_expense/core/helpers/sized_boxes.dart';
+import 'package:op_expense/core/router/routes_name.dart';
 import 'package:op_expense/core/theme/app_colors.dart';
 import 'package:op_expense/core/theme/text_styles.dart';
+import 'package:op_expense/core/widgets/primary_button.dart';
+import 'package:op_expense/core/widgets/secondary_button.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnboardingScreen extends StatelessWidget {
   OnboardingScreen({super.key});
   // controller to track which page we are on
-  PageController _controller = PageController();
+  final PageController _controller = PageController();
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -22,44 +25,43 @@ class OnboardingScreen extends StatelessWidget {
             children: [
               Expanded(
                 flex: 5,
-                child: Container(
-                  child: PageView(
-                    controller: _controller,
-                    children: [
-                      onboardingPictureTitleDescription(
-                        imageName: 'onboarding1.png',
-                        title: 'Gain total control of your money',
-                        description:
-                            'Become your own money manager and make every cent count',
-                      ),
-                      onboardingPictureTitleDescription(
-                        imageName: 'onboarding2.png',
-                        title: 'Know where your money goes',
-                        description:
-                            'Track your transaction easily, with categories and financial report ',
-                      ),
-                      onboardingPictureTitleDescription(
-                        imageName: 'onboarding3.png',
-                        title: 'Planning ahead',
-                        description:
-                            'Setup your budget for each category so you in control',
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                height: 10.h,
-                child: SmoothPageIndicator(
+                child: PageView(
                   controller: _controller,
-                  count: 3,
-                  effect: WormEffect(
-                    dotColor: AppColors.violet20,
-                    activeDotColor: AppColors.violet100,
-                    dotHeight: 10.h,
-                  ),
+                  children: [
+                    //!---------- ONBOARDING PAGES -----------------------------
+
+                    onboardingPictureTitleDescription(
+                      imageName: 'onboarding1.png',
+                      title: 'Gain total control of your money',
+                      description:
+                          'Become your own money manager and make every cent count',
+                    ),
+                    onboardingPictureTitleDescription(
+                      imageName: 'onboarding2.png',
+                      title: 'Know where your money goes',
+                      description:
+                          'Track your transaction easily, with categories and financial report ',
+                    ),
+                    onboardingPictureTitleDescription(
+                      imageName: 'onboarding3.png',
+                      title: 'Planning ahead',
+                      description:
+                          'Setup your budget for each category so you in control',
+                    ),
+                  ],
                 ),
               ),
+              //!---------- PAGE INDICATOR -----------------------------
+              SmoothPageIndicator(
+                controller: _controller,
+                count: 3,
+                effect: WormEffect(
+                  dotColor: AppColors.violet20,
+                  activeDotColor: AppColors.violet100,
+                  dotHeight: 10.h,
+                ),
+              ),
+
               Expanded(
                 flex: 2,
                 child: Column(
@@ -69,39 +71,25 @@ class OnboardingScreen extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
                       child: Column(
                         children: [
-                          Container(
-                            width: double.infinity,
-                            height: 65.h,
-                            decoration: BoxDecoration(
-                              color: AppColors.violet100,
-                              borderRadius: BorderRadius.circular(16.r),
-                            ),
-                            alignment: Alignment.center,
-                            child: FittedBox(
-                              child: Text(
-                                'Sign Up',
-                                style: TextStyles.w600Light80
-                                    .copyWith(fontSize: 16.sp),
-                              ),
-                            ),
+                          //!---------- SING UP BUTTON -----------------------------
+
+                          PrimaryButton(
+                            text: 'Sign Up',
+                            onPressed: () {
+                              //navigation to Sign up screen
+                              Navigator.pushNamed(
+                                context,
+                                RoutesName.signUpScreenName,
+                              );
+                            },
                           ),
                           heightSizedBox(16),
-                          Container(
-                            width: double.infinity,
-                            height: 65.h,
-                            decoration: BoxDecoration(
-                              color: AppColors.violet20,
-                              borderRadius: BorderRadius.circular(16.r),
-                            ),
-                            alignment: Alignment.center,
-                            child: FittedBox(
-                              child: Text(
-                                'Login',
-                                style: TextStyles.w600Violet20
-                                    .copyWith(fontSize: 16.sp),
-                              ),
-                            ),
-                          ),
+                          //!---------- lOGIN BUTTON -----------------------------
+
+                          SecondaryButton(
+                            text: "Login",
+                            onPressed: () {},
+                          )
                         ],
                       ),
                     )
@@ -128,7 +116,7 @@ class OnboardingScreen extends StatelessWidget {
         children: [
           Expanded(
             flex: 3,
-            child: Container(
+            child: SizedBox(
               width: 300.w,
               child: Image.asset(
                 'lib/core/assets/images/onboarding/$imageName',
