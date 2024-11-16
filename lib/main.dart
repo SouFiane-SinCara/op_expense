@@ -14,7 +14,6 @@ class OpExpenseApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: const Size(375, 812),
       minTextAdapt: true,
-      splitScreenMode: true,
       child: MaterialApp(
         onGenerateRoute: RouterApp().onGenerateRoute,
         debugShowCheckedModeBanner: false,
