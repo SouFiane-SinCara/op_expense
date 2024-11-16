@@ -88,7 +88,11 @@ class OnboardingScreen extends StatelessWidget {
 
                           SecondaryButton(
                             text: "Login",
-                            onPressed: () {},
+                            onPressed: () {
+                              // navigation to login screen
+                              Navigator.pushNamed(
+                                  context, RoutesName.loginScreenName);
+                            },
                           )
                         ],
                       ),

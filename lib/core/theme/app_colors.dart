@@ -12,7 +12,7 @@ class AppColors {
   static const Color light = Color(0xFFFFFFFF);
   static const Color light20 = Color(0xFF91919F);
   static const Color light40 = Color(0xFFDFDFDF);
-  static const Color light60 = Color(0xFFBDBDBD);
+  static const Color light60 = Color(0xFFF1F1FA);
   static const Color light80 = Color(0xFFFCFCFC);
   static const Color light100 = Color(0xFF757575);
 

@@ -18,8 +18,28 @@ class TextStyles {
       fontFamily: fontFamily,
       color: AppColors.light80,
       fontWeight: FontWeight.w600);
-      static const TextStyle w600Violet20 = TextStyle(
+  static const TextStyle w600Violet20 = TextStyle(
       fontFamily: fontFamily,
       color: AppColors.violet100,
-      fontWeight: FontWeight.w600); 
+      fontWeight: FontWeight.w600);
+  static const TextStyle w600Dark50 = TextStyle(
+      fontFamily: fontFamily,
+      color: AppColors.dark50,
+      fontWeight: FontWeight.w600);
+  static const TextStyle w400Light40 = TextStyle(
+      fontFamily: fontFamily,
+      color: AppColors.light20,
+      fontWeight: FontWeight.w400);
+  static const TextStyle w500Dark = TextStyle(
+      fontFamily: fontFamily,
+      color: AppColors.dark,
+      fontWeight: FontWeight.w500);
+  static const TextStyle w500Violet100 = TextStyle(
+      fontFamily: fontFamily,
+      color: AppColors.violet100,
+      fontWeight: FontWeight.w500);
+  static const TextStyle w700Light20 = TextStyle(
+      fontFamily: fontFamily,
+      color: AppColors.light20,
+      fontWeight: FontWeight.w700);
 }

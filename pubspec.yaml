@@ -12,7 +12,9 @@ dependencies:
     sdk: flutter
   flutter_native_splash: ^2.4.2
   flutter_screenutil: ^5.9.3
+  flutter_svg: ^2.0.14
   smooth_page_indicator: ^1.2.0+3
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_lints: ^4.0.0
@@ -24,6 +26,10 @@ flutter:
 
   assets:
     - lib/core/assets/images/onboarding/
+    - lib/core/assets/icons/Magicons/Glyph/Arrow/
+    - lib/core/assets/icons/Magicons/Outline/User Interface/
+    - lib/core/assets/icons/
+
   fonts:
     - family: Inter
       fonts:
