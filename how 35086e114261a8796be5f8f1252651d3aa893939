@@ -1,0 +1,35 @@
+[33m17cb42c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/SignUp[m[33m)[m HEAD@{0}: checkout: moving from dev to feature/SignUp
+[33mc5d64de[m[33m ([m[1;32mfix/FlutterScreenutilResponsiveIssue[m[33m, [m[1;32mdev[m[33m)[m HEAD@{1}: checkout: moving from feature/SignUp to dev
+[33m17cb42c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/SignUp[m[33m)[m HEAD@{2}: reset: moving to HEAD
+[33m17cb42c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/SignUp[m[33m)[m HEAD@{3}: checkout: moving from dev to feature/SignUp
+[33mc5d64de[m[33m ([m[1;32mfix/FlutterScreenutilResponsiveIssue[m[33m, [m[1;32mdev[m[33m)[m HEAD@{4}: checkout: moving from feature/SignUp to dev
+[33m17cb42c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/SignUp[m[33m)[m HEAD@{5}: reset: moving to HEAD
+[33m17cb42c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/SignUp[m[33m)[m HEAD@{6}: reset: moving to HEAD
+[33m17cb42c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/SignUp[m[33m)[m HEAD@{7}: merge dev: Merge made by the 'ort' strategy.
+[33m1743669[m HEAD@{8}: checkout: moving from feature/Signup to feature/SignUp
+[33m1743669[m HEAD@{9}: checkout: moving from dev to feature/Signup
+[33mc5d64de[m[33m ([m[1;32mfix/FlutterScreenutilResponsiveIssue[m[33m, [m[1;32mdev[m[33m)[m HEAD@{10}: merge fix/FlutterScreenutilResponsiveIssue: Fast-forward
+[33me7ae03b[m[33m ([m[1;32mfeature/Onboarding[m[33m)[m HEAD@{11}: checkout: moving from fix/FlutterScreenutilResponsiveIssue to dev
+[33mc5d64de[m[33m ([m[1;32mfix/FlutterScreenutilResponsiveIssue[m[33m, [m[1;32mdev[m[33m)[m HEAD@{12}: commit: resolve flutter_screenutil responsive issue by removing splitScreenMode: true
+[33me7ae03b[m[33m ([m[1;32mfeature/Onboarding[m[33m)[m HEAD@{13}: checkout: moving from dev to fix/FlutterScreenutilResponsiveIssue
+[33me7ae03b[m[33m ([m[1;32mfeature/Onboarding[m[33m)[m HEAD@{14}: checkout: moving from feature/SignUp to dev
+[33m1743669[m HEAD@{15}: commit: Create Sign-Up Screen UI and supporting components
+[33me7ae03b[m[33m ([m[1;32mfeature/Onboarding[m[33m)[m HEAD@{16}: merge dev: Fast-forward
+[33m15c5c1b[m[33m ([m[1;31morigin/feature/Onboarding[m[33m, [m[1;31morigin/dev[m[33m)[m HEAD@{17}: checkout: moving from dev to feature/SignUp
+[33me7ae03b[m[33m ([m[1;32mfeature/Onboarding[m[33m)[m HEAD@{18}: merge feature/onboarding: Fast-forward
+[33m15c5c1b[m[33m ([m[1;31morigin/feature/Onboarding[m[33m, [m[1;31morigin/dev[m[33m)[m HEAD@{19}: checkout: moving from feature/Onboarding to dev
+[33me7ae03b[m[33m ([m[1;32mfeature/Onboarding[m[33m)[m HEAD@{20}: commit: Refactor onboarding screen file, improve code structure and modularity, add Sign Up navigation
+[33m15c5c1b[m[33m ([m[1;31morigin/feature/Onboarding[m[33m, [m[1;31morigin/dev[m[33m)[m HEAD@{21}: checkout: moving from feature/SignUp to feature/Onboarding
+[33m15c5c1b[m[33m ([m[1;31morigin/feature/Onboarding[m[33m, [m[1;31morigin/dev[m[33m)[m HEAD@{22}: checkout: moving from feature/SignUp to feature/SignUp
+[33m15c5c1b[m[33m ([m[1;31morigin/feature/Onboarding[m[33m, [m[1;31morigin/dev[m[33m)[m HEAD@{23}: checkout: moving from dev to feature/SignUp
+[33m15c5c1b[m[33m ([m[1;31morigin/feature/Onboarding[m[33m, [m[1;31morigin/dev[m[33m)[m HEAD@{24}: merge feature/Onboarding: Fast-forward
+[33m9bb4fcc[m[33m ([m[1;32mfeature/SplashScreen[m[33m)[m HEAD@{25}: checkout: moving from feature/Onboarding to dev
+[33m15c5c1b[m[33m ([m[1;31morigin/feature/Onboarding[m[33m, [m[1;31morigin/dev[m[33m)[m HEAD@{26}: commit: implement onboarding screen UI
+[33m9bb4fcc[m[33m ([m[1;32mfeature/SplashScreen[m[33m)[m HEAD@{27}: checkout: moving from dev to feature/Onboarding
+[33m9bb4fcc[m[33m ([m[1;32mfeature/SplashScreen[m[33m)[m HEAD@{28}: merge feature/SplashScreen: Fast-forward
+[33m756165e[m[33m ([m[1;32mmain[m[33m)[m HEAD@{29}: checkout: moving from feature/SplashScreen to dev
+[33m9bb4fcc[m[33m ([m[1;32mfeature/SplashScreen[m[33m)[m HEAD@{30}: commit: Implement native splash screen for Android,Android 12+, iOS
+[33m756165e[m[33m ([m[1;32mmain[m[33m)[m HEAD@{31}: checkout: moving from feature/SplashScreen to feature/SplashScreen
+[33m756165e[m[33m ([m[1;32mmain[m[33m)[m HEAD@{32}: checkout: moving from dev to feature/SplashScreen
+[33m756165e[m[33m ([m[1;32mmain[m[33m)[m HEAD@{33}: checkout: moving from main to dev
+[33m756165e[m[33m ([m[1;32mmain[m[33m)[m HEAD@{34}: commit (initial): first commit

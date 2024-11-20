@@ -42,4 +42,8 @@ class TextStyles {
       fontFamily: fontFamily,
       color: AppColors.light20,
       fontWeight: FontWeight.w700);
+       static const TextStyle w700red100 = TextStyle(
+      fontFamily: fontFamily,
+      color: AppColors.red100,
+      fontWeight: FontWeight.w600);
 }

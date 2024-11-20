@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "290805600882",
+    "project_id": "op-expense",
+    "storage_bucket": "op-expense.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:290805600882:android:a1fe0599248e4c703b68eb",
+        "android_client_info": {
+          "package_name": "com.OpExpense.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzZ5C4O6TetTbzsloD5kDzb7CnsqLWymY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:290805600882:android:4aa75df6fcf5d5d73b68eb",
+        "android_client_info": {
+          "package_name": "com.soufiane.op_expense"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzZ5C4O6TetTbzsloD5kDzb7CnsqLWymY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

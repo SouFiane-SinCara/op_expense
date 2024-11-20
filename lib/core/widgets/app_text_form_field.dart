@@ -8,9 +8,9 @@ class AppTextFormField extends StatefulWidget {
   final String hintText;
   final TextEditingController controller;
   final TextInputAction? textInputAction;
-  bool? secureTextFormField;
+  final bool? secureTextFormField;
 
-  AppTextFormField({
+  const AppTextFormField({
     super.key,
     required this.hintText,
     required this.controller,
