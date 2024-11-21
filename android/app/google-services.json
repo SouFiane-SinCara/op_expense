@@ -1,45 +1,36 @@
 {
   "project_info": {
-    "project_number": "290805600882",
-    "project_id": "op-expense",
-    "storage_bucket": "op-expense.firebasestorage.app"
+    "project_number": "1085575491495",
+    "project_id": "op-expense-44837",
+    "storage_bucket": "op-expense-44837.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:290805600882:android:a1fe0599248e4c703b68eb",
+        "mobilesdk_app_id": "1:1085575491495:android:274e6a8312c14669b61082",
         "android_client_info": {
-          "package_name": "com.OpExpense.app"
+          "package_name": "com.example.op_expense"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1085575491495-c4jlnf8qd9kioi72u05gj2sqbvfnto4r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyDzZ5C4O6TetTbzsloD5kDzb7CnsqLWymY"
+          "current_key": "AIzaSyDlO3Nj8cB8sT2DX1HExG79309zmtQ-Edc"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:290805600882:android:4aa75df6fcf5d5d73b68eb",
-        "android_client_info": {
-          "package_name": "com.soufiane.op_expense"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDzZ5C4O6TetTbzsloD5kDzb7CnsqLWymY"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1085575491495-c4jlnf8qd9kioi72u05gj2sqbvfnto4r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
