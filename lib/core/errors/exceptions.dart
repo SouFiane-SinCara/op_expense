@@ -3,6 +3,14 @@ abstract class Exceptions {
   const Exceptions({required this.code});
 }
 
+class NoInternetException extends Exceptions {
+  const NoInternetException() : super(code: '');
+}
+
+class GeneralFireStoreException extends Exceptions {
+  const GeneralFireStoreException() : super(code: '');
+}
+
 abstract class SignUpExceptions extends Exceptions {
   const SignUpExceptions({required super.code});
 }
@@ -11,8 +19,8 @@ abstract class FirebaseAuthExceptions extends SignUpExceptions {
   const FirebaseAuthExceptions({required super.code});
 }
 
-class GeneralFireStoreException extends SignUpExceptions {
-  const GeneralFireStoreException() : super(code: '');
+class GeneralSignInWithGoogleException extends SignUpExceptions {
+  GeneralSignInWithGoogleException() : super(code: '');
 }
 
 // Specific FirebaseAuthExceptions
@@ -51,13 +59,6 @@ class UserDisabledException extends FirebaseAuthExceptions {
         );
 }
 
-class UserNotFoundException extends FirebaseAuthExceptions {
-  const UserNotFoundException()
-      : super(
-          code: "user-not-found",
-        );
-}
-
 class WrongPasswordException extends FirebaseAuthExceptions {
   const WrongPasswordException()
       : super(
@@ -77,4 +78,76 @@ class UnknownAuthException extends FirebaseAuthExceptions {
       : super(
           code: "unknown",
         );
+}
+
+abstract class LoginExceptions extends Exceptions {
+  const LoginExceptions({required super.code});
+}
+
+class GeneralLoginException extends LoginExceptions {
+  const GeneralLoginException() : super(code: '');
+}
+
+class InvalidEmailLoginException extends LoginExceptions {
+  const InvalidEmailLoginException()
+      : super(
+          code: "invalid-email",
+        );
+}
+
+class InvalidCredentialLoginException extends LoginExceptions {
+  const InvalidCredentialLoginException()
+      : super(
+          code: "invalid-credential",
+        );
+}
+
+class EmailNotFoundException extends LoginExceptions {
+  const EmailNotFoundException()
+      : super(
+          code: "email-not-found",
+        );
+}
+
+class WrongPasswordLoginException extends LoginExceptions {
+  const WrongPasswordLoginException()
+      : super(
+          code: "wrong-password",
+        );
+}
+
+class UserDisabledLoginException extends LoginExceptions {
+  const UserDisabledLoginException()
+      : super(
+          code: "user-disabled",
+        );
+}
+
+class UserNotFoundLoginException extends LoginExceptions {
+  const UserNotFoundLoginException()
+      : super(
+          code: "user-not-found",
+        );
+}
+
+class TooManyRequestsLoginException extends LoginExceptions {
+  const TooManyRequestsLoginException()
+      : super(
+          code: "too-many-requests",
+        );
+}
+
+class UnknownLoginException extends LoginExceptions {
+  const UnknownLoginException()
+      : super(
+          code: "unknown",
+        );
+}
+
+class HiveStorageException extends Exceptions {
+  const HiveStorageException() : super(code: 'hive-storage-error');
+}
+
+class NoAccountLoggedException extends Exceptions {
+  const NoAccountLoggedException() : super(code: 'no-account-logged');
 }

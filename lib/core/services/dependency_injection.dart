@@ -1,33 +1,50 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
-import 'package:op_expense/features/SignUp/data/data_sources/sing_up_remote_data_source.dart';
-import 'package:op_expense/features/SignUp/data/repositories/sign_up_repository_impl.dart';
-import 'package:op_expense/features/SignUp/domain/repositories/sign_up_repository.dart';
-import 'package:op_expense/features/SignUp/domain/use_cases/sign_up_with_email_password_use_case.dart';
-import 'package:op_expense/features/SignUp/presentation/state_management/sign_up_cubit/sign_up_cubit.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hive/hive.dart';
+import 'package:op_expense/features/Authentication/data/data_sources/auth_local_data_source.dart';
+import 'package:op_expense/features/Authentication/data/data_sources/auth_remote_data_source.dart';
+import 'package:op_expense/features/Authentication/data/repositories/auth_repository_impl.dart';
+import 'package:op_expense/features/Authentication/domain/repositories/auth_repository.dart';
+import 'package:op_expense/features/Authentication/domain/use_cases/login_use_case.dart';
+import 'package:op_expense/features/Authentication/domain/use_cases/sign_up_with_email_password_use_case.dart';
+import 'package:op_expense/features/Authentication/presentation/cubits/login_cubit/login_cubit.dart';
+import 'package:op_expense/features/Authentication/presentation/cubits/sign_up_cubit/sign_up_cubit.dart';
 
 GetIt sl = GetIt.instance;
 void setup() {
-  //!------------ Sign up feature --------------
+  //!------------ Auth feature --------------
   sl
     //*--------- controller ----------
     ..registerFactory(
-      () => SignUpCubit(signUpUseCase: sl()),
+      () => SignUpCubit(signUpUseCase: sl(), authRepository: sl()),
+    )
+    ..registerFactory(
+      () => LoginCubit(loginUseCase: sl(), authRepository: sl()),
     )
     //*-------- use case ----------
     ..registerLazySingleton(
-      () => SignUpWithEmailPasswordUseCase(signUpRepository: sl()),
+      () => SignUpWithEmailPasswordUseCase(authRepository: sl()),
+    )
+    ..registerLazySingleton(
+      () => LoginUseCase(authRepository: sl()),
     )
     //*-------- repository ----------
 
-    ..registerLazySingleton<SignUpRepository>(
-        () => SignUpRepositoryImpl(signUpRemoteDataSource: sl()))
+    ..registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(
+        authRemoteDataSource: sl(), authLocalDataSource: sl()))
     //*-------- data source ----------
-
-    ..registerLazySingleton<SinUpRemoteDataSource>(
-      () => SignUpFireBaseRemoteDataSource(
-          firebaseAuth: sl(), firebaseFirestore: sl()),
+    ..registerLazySingleton<AuthLocalDataSource>(
+      () => AuthLocalDataSourceImpl(),
+    )
+    ..registerLazySingleton<AuthRemoteDataSource>(
+      () => AuthFireBaseRemoteDataSource(
+          connectivity: sl(),
+          firebaseAuth: sl(),
+          firebaseFirestore: sl(),
+          googleSignIn: sl()),
     )
     //*-------- services  ----------
 
@@ -36,5 +53,11 @@ void setup() {
     )
     ..registerLazySingleton(
       () => FirebaseFirestore.instance,
+    )
+    ..registerLazySingleton(
+      () => Connectivity(),
+    )
+    ..registerLazySingleton(
+      () => GoogleSignIn(),
     );
 }

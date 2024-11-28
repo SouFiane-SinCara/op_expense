@@ -46,4 +46,8 @@ class TextStyles {
       fontFamily: fontFamily,
       color: AppColors.red100,
       fontWeight: FontWeight.w600);
+      static const TextStyle w600Violet100 = TextStyle(
+      fontFamily: fontFamily,
+      color: AppColors.violet100,
+      fontWeight: FontWeight.w600);
 }

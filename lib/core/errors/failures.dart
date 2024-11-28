@@ -3,6 +3,10 @@ abstract class Failures {
   const Failures({required this.message});
 }
 
+class NoInternetFailure extends Failures {
+  const NoInternetFailure() : super(message: 'No internet connection.');
+}
+
 abstract class SignUpFailures extends Failures {
   const SignUpFailures({required super.message});
 }
@@ -16,8 +20,13 @@ class DeclinedTermsAndConditionsFailure extends SignUpFailures {
       : super(message: 'You must accept the terms and conditions to proceed.');
 }
 
-class EmptyFieldsFailure extends SignUpFailures {
-  EmptyFieldsFailure()
+class GeneralSignInWithGoogleFailure extends SignUpFailures {
+  GeneralSignInWithGoogleFailure()
+      : super(message: 'An unknown google authentication error. try again.');
+}
+
+class EmptySignUpFieldsFailure extends SignUpFailures {
+  EmptySignUpFieldsFailure()
       : super(
             message:
                 'All fields are required. Please fill out all the fields and try again.');
@@ -47,8 +56,8 @@ class UsernameTooLongFailure extends SignUpFailures {
       : super(message: "Username cannot exceed 15 characters.");
 }
 
-class InvalidEmailFailure extends FirebaseAuthFailures {
-  const InvalidEmailFailure()
+class InvalidEmailSignUpFailure extends FirebaseAuthFailures {
+  const InvalidEmailSignUpFailure()
       : super(
             message:
                 "The email address provided is invalid. Please check and try again.");
@@ -74,18 +83,6 @@ class UserDisabledFailure extends FirebaseAuthFailures {
                 "The user account has been disabled. Please contact support.");
 }
 
-class UserNotFoundFailure extends FirebaseAuthFailures {
-  const UserNotFoundFailure()
-      : super(
-            message:
-                "No user found for the given credentials. Please try again.");
-}
-
-class WrongPasswordFailure extends FirebaseAuthFailures {
-  const WrongPasswordFailure()
-      : super(message: "The password entered is incorrect. Please try again.");
-}
-
 class TooManyRequestsFailure extends FirebaseAuthFailures {
   const TooManyRequestsFailure()
       : super(
@@ -98,4 +95,78 @@ class UnknownAuthFailure extends FirebaseAuthFailures {
       : super(
             message:
                 "An unknown authentication error occurred. Please try again.");
+}
+
+abstract class LoginFailures extends Failures {
+  LoginFailures({required super.message});
+}
+
+class EmptyLoginFieldsFailure extends LoginFailures {
+  EmptyLoginFieldsFailure()
+      : super(
+            message:
+                "All fields are required. Please fill out all the fields and try again.");
+}
+
+class GeneralLoginFailure extends LoginFailures {
+  GeneralLoginFailure()
+      : super(
+            message:
+                "An unknown error occurred while trying to log in. Please try again.");
+}
+
+class InvalidEmailLoginFailure extends LoginFailures {
+  InvalidEmailLoginFailure()
+      : super(
+            message:
+                "The email address provided is invalid. Please check and try again.");
+}
+
+class InvalidCredentialLoginFailure extends LoginFailures {
+  InvalidCredentialLoginFailure()
+      : super(
+            message:
+                "The credentials provided are invalid. Please check and try again.");
+}
+
+class UserNotFoundLoginFailure extends LoginFailures {
+  UserNotFoundLoginFailure()
+      : super(
+            message:
+                "No user found for the given credentials. Please try again.");
+}
+
+class WrongPasswordLoginFailure extends LoginFailures {
+  WrongPasswordLoginFailure()
+      : super(message: "The password entered is incorrect. Please try again.");
+}
+
+class UserDisabledLoginFailure extends LoginFailures {
+  UserDisabledLoginFailure()
+      : super(
+            message:
+                "The user account has been disabled. Please contact support.");
+}
+
+class TooManyRequestsLoginFailure extends LoginFailures {
+  TooManyRequestsLoginFailure()
+      : super(
+            message:
+                "Too many requests have been made. Please wait and try again later.");
+}
+
+class UnknownLoginFailure extends LoginFailures {
+  UnknownLoginFailure()
+      : super(
+            message:
+                "An unknown error occurred while trying to log in. Please try again.");
+}
+
+class HiveStorageFailure extends Failures {
+  const HiveStorageFailure()
+      : super(message: 'An error occurred while accessing local storage.');
+}
+class NoAccountLoggedFailure extends Failures {
+  const NoAccountLoggedFailure()
+      : super(message: 'No account is currently logged in.');
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart'; 
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:op_expense/core/theme/app_colors.dart';
 import 'package:op_expense/core/theme/text_styles.dart';
 
@@ -15,23 +15,26 @@ AppBar myAppBar({
   return AppBar(
     backgroundColor: backgroundColor ?? AppColors.light,
     leadingWidth: 48.w,
-    leading: Container(
-      margin: EdgeInsets.only(left: 16.w),
-      child: GestureDetector(
-        onTap: onPressedLeading ??
-            () {
-              Navigator.pop(context);
-            },
-        child: SvgPicture.asset(
-          'lib/core/assets/icons/Magicons/Glyph/Arrow/arrow-left.svg',
-          colorFilter: ColorFilter.mode(
-            iconColor ?? AppColors.dark50,
-            BlendMode.srcIn,
-          ),
-          fit: BoxFit.contain,
-        ),
-      ),
-    ),
+    leading: Navigator.of(context).canPop()
+        ? Container(
+            margin: EdgeInsets.only(left: 16.w),
+            child: GestureDetector(
+              onTap: onPressedLeading ??
+                  () {
+                    // navigate back to the previous screen if possible
+                    Navigator.of(context).pop();
+                  },
+              child: SvgPicture.asset(
+                'lib/core/assets/icons/Magicons/Glyph/Arrow/arrow-left.svg',
+                colorFilter: ColorFilter.mode(
+                  iconColor ?? AppColors.dark50,
+                  BlendMode.srcIn,
+                ),
+                fit: BoxFit.contain,
+              ),
+            ),
+          )
+        : const SizedBox(),
     centerTitle: true,
     title: Text(
       title,
