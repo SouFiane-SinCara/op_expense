@@ -115,4 +115,46 @@ class AuthRepositoryImpl extends AuthRepository {
       return left(const HiveStorageFailure());
     }
   }
+
+  @override
+  Future<Either<Failures, Unit>> signOut() async {
+    try {
+      await authRemoteDataSource.signOut();
+      await authLocalDataSource.deleteAccount();
+      return right(unit);
+    } on NoInternetException {
+      return left(const NoInternetFailure());
+    } on HiveStorageException {
+      return left(const HiveStorageFailure());
+    } catch (e) {
+      return left(const GeneralSignOutFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failures, bool>> checkEmailVerification() async {
+    try {
+      bool isVerified = await authRemoteDataSource.checkEmailVerification();
+      if (isVerified) authLocalDataSource.verifyEmail();
+      return right(isVerified);
+    } on NoInternetException {
+      return left(const NoInternetFailure());
+    } catch (e) {
+      return left(const GeneralCheckEmailVerificationFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failures, Unit>> sendEmailVerification() async {
+    try {
+      await authRemoteDataSource.sendEmailVerification();
+      return right(unit);
+    } on NoInternetException {
+      return left(const NoInternetFailure());
+    } on TooManyRequestsSendEmailVerificationException {
+      return left(const TooManyRequestsSendEmailVerificationFailure());
+    } catch (e) {
+      return left(const GeneralSendEmailVerificationFailure());
+    }
+  }
 }

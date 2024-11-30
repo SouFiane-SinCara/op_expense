@@ -1,3 +1,4 @@
+
 abstract class Exceptions {
   final String code;
   const Exceptions({required this.code});
@@ -150,4 +151,29 @@ class HiveStorageException extends Exceptions {
 
 class NoAccountLoggedException extends Exceptions {
   const NoAccountLoggedException() : super(code: 'no-account-logged');
+}
+
+class GeneralSignOutException extends Exceptions {
+  const GeneralSignOutException() : super(code: 'general-sign-out-error');
+}
+
+class GeneralCheckEmailVerificationException extends Exceptions {
+  const GeneralCheckEmailVerificationException()
+      : super(code: 'general-check-email-verification-error');
+}
+
+abstract class SendEmailVerificationExceptions extends Exceptions {
+  const SendEmailVerificationExceptions({required super.code});
+}
+
+class GeneralSendEmailVerificationException
+    extends SendEmailVerificationExceptions {
+  const GeneralSendEmailVerificationException()
+      : super(code: 'general-send-email-verification-error');
+}
+
+class TooManyRequestsSendEmailVerificationException
+    extends SendEmailVerificationExceptions {
+  const TooManyRequestsSendEmailVerificationException()
+      : super(code: 'too-many-requests-send-email-verification-error');
 }

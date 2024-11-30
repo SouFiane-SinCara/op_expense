@@ -10,7 +10,7 @@ import 'package:op_expense/core/widgets/app_text_form_field.dart';
 import 'package:op_expense/core/widgets/my_app_bar.dart';
 import 'package:op_expense/core/widgets/primary_button.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/login_cubit/login_cubit.dart';
-import 'package:op_expense/features/Authentication/presentation/widgets/Auth_error_widget.dart';
+import 'package:op_expense/features/Authentication/presentation/widgets/auth_error_widget.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController _emailTextEditingController =
@@ -32,17 +32,19 @@ class LoginScreen extends StatelessWidget {
           listener: (context, state) {
             if (state is LoginSuccessState) {
               state.account.isVerified
-                  ? Navigator.pushReplacementNamed(
-                      context, RoutesName.homeScreenName)
-                  : Navigator.pushReplacementNamed(
-                      context, RoutesName.verificationScreenName);
+                  ? Navigator.pushNamedAndRemoveUntil(
+                      context, RoutesName.homeScreenName, (route) => false)
+                  : Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      RoutesName.verificationScreenName,
+                      (route) => false,
+                    );
             }
           },
           builder: (context, state) {
             switch (state) {
               case LoginLoadingState():
                 return const AppLoading();
-
               default:
                 return SingleChildScrollView(
                   child: Container(

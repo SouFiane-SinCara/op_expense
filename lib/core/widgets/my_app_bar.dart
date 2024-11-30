@@ -11,8 +11,10 @@ AppBar myAppBar({
   Color? backgroundColor,
   Color? iconColor,
   required BuildContext context,
+  List<Widget>? actions,
 }) {
   return AppBar(
+    actions: actions,
     backgroundColor: backgroundColor ?? AppColors.light,
     leadingWidth: 48.w,
     leading: Navigator.of(context).canPop()

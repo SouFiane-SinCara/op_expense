@@ -3,14 +3,17 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:hive/hive.dart';
 import 'package:op_expense/features/Authentication/data/data_sources/auth_local_data_source.dart';
 import 'package:op_expense/features/Authentication/data/data_sources/auth_remote_data_source.dart';
 import 'package:op_expense/features/Authentication/data/repositories/auth_repository_impl.dart';
 import 'package:op_expense/features/Authentication/domain/repositories/auth_repository.dart';
 import 'package:op_expense/features/Authentication/domain/use_cases/login_use_case.dart';
 import 'package:op_expense/features/Authentication/domain/use_cases/sign_up_with_email_password_use_case.dart';
+import 'package:op_expense/features/Authentication/presentation/cubits/authentication_cubit/authentication_cubit.dart';
+import 'package:op_expense/features/Authentication/presentation/cubits/check_email_verification_cubit/check_email_verification_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/login_cubit/login_cubit.dart';
+import 'package:op_expense/features/Authentication/presentation/cubits/send_email_verification_cubit/send_email_verification_cubit.dart';
+import 'package:op_expense/features/Authentication/presentation/cubits/sign_out_cubit/sign_out_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/sign_up_cubit/sign_up_cubit.dart';
 
 GetIt sl = GetIt.instance;
@@ -19,10 +22,27 @@ void setup() {
   sl
     //*--------- controller ----------
     ..registerFactory(
-      () => SignUpCubit(signUpUseCase: sl(), authRepository: sl()),
+      () => SignUpCubit(
+          signUpUseCase: sl(), authRepository: sl(), authenticationCubit: sl()),
     )
     ..registerFactory(
-      () => LoginCubit(loginUseCase: sl(), authRepository: sl()),
+      () => LoginCubit(
+          loginUseCase: sl(), authRepository: sl(), authenticationCubit: sl()),
+    )
+    ..registerFactory(
+      () => AuthenticationCubit(),
+    )
+    ..registerFactory(
+        () => SignOutCubit(repository: sl(), authenticationCubit: sl()))
+    ..registerFactory(
+      () => CheckEmailVerificationCubit(
+        repository: sl(),
+      ),
+    )
+    ..registerFactory(
+      () => SendEmailVerificationCubit(
+        authRepository: sl(),
+      ),
     )
     //*-------- use case ----------
     ..registerLazySingleton(

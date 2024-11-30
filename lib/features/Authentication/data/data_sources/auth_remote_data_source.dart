@@ -14,6 +14,9 @@ abstract class AuthRemoteDataSource {
   });
   Future<AccountModel> signUpWithGoogle();
   Future<AccountModel> login({required String email, required String password});
+  Future<void> signOut();
+  Future<bool> checkEmailVerification();
+  Future<void> sendEmailVerification();
 }
 
 class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
@@ -28,16 +31,20 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
     required this.connectivity,
   });
 
+  Future checkConnection() async {
+    final result = await connectivity.checkConnectivity();
+    if (result.last == ConnectivityResult.none) {
+      throw const NoInternetException();
+    }
+  }
+
   @override
   Future<AccountModel> signUpWithEmailPassword(
       {required String email,
       required String password,
       required String name}) async {
     try {
-      final result = await connectivity.checkConnectivity();
-      if (result.last == ConnectivityResult.none) {
-        throw const NoInternetException();
-      }
+      await checkConnection();
 
       //!----------- create a user in firebase auth -----------------
       UserCredential userCredential = await firebaseAuth
@@ -87,10 +94,7 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
   @override
   Future<AccountModel> signUpWithGoogle() async {
     try {
-      final result = await connectivity.checkConnectivity();
-      if (result.last == ConnectivityResult.none) {
-        throw const NoInternetException();
-      }
+      await checkConnection();
       await googleSignIn.signOut();
       GoogleSignInAccount? googleUser = await googleSignIn.signIn();
       GoogleSignInAuthentication googleSignInAuthentication =
@@ -114,7 +118,7 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
           .set(
             account.toJson(),
           );
-
+      await sendEmailVerification();
       return account;
     } on FirebaseException {
       throw const GeneralFireStoreException();
@@ -131,16 +135,14 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
   Future<AccountModel> login(
       {required String email, required String password}) async {
     try {
-      final result = await connectivity.checkConnectivity();
-      if (result.last == ConnectivityResult.none) {
-        throw const NoInternetException();
-      }
+      await checkConnection();
       UserCredential userCredential = await firebaseAuth
           .signInWithEmailAndPassword(email: email, password: password);
       final map = await firebaseFirestore
           .collection("users")
           .doc(userCredential.user!.uid)
           .get();
+
       AccountModel accountModel = AccountModel.fromJson(map.data()!);
 
       return accountModel;
@@ -171,6 +173,52 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
       throw const HiveStorageException();
     } catch (e) {
       throw const GeneralLoginException();
+    }
+  }
+
+  @override
+  Future<void> signOut() async {
+    try {
+      await checkConnection();
+      await firebaseAuth.signOut();
+      await googleSignIn.signOut();
+    } on FirebaseException {
+      throw const GeneralFireStoreException();
+    } on NoInternetException {
+      throw const NoInternetException();
+    } catch (e) {
+      throw const GeneralSignOutException();
+    }
+  }
+
+  @override
+  Future<bool> checkEmailVerification() async {
+    try {
+      await checkConnection();
+      await firebaseAuth.currentUser!.reload();
+      return firebaseAuth.currentUser!.emailVerified;
+    } on NoInternetException {
+      throw const NoInternetException();
+    } catch (e) {
+      throw const GeneralCheckEmailVerificationException();
+    }
+  }
+
+  @override
+  Future<void> sendEmailVerification() async {
+    try {
+      await checkConnection();
+      await firebaseAuth.currentUser!.sendEmailVerification();
+    } on FirebaseAuthException catch (e) {
+  
+      if (e.code == "too-many-requests") {
+        throw const TooManyRequestsSendEmailVerificationException();
+      }
+      throw const GeneralFireStoreException();
+    } on NoInternetException {
+      throw const NoInternetException();
+    } catch (e) {
+      throw const GeneralSendEmailVerificationException();
     }
   }
 }

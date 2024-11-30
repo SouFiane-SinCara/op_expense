@@ -166,7 +166,40 @@ class HiveStorageFailure extends Failures {
   const HiveStorageFailure()
       : super(message: 'An error occurred while accessing local storage.');
 }
+
 class NoAccountLoggedFailure extends Failures {
   const NoAccountLoggedFailure()
       : super(message: 'No account is currently logged in.');
+}
+
+class GeneralSignOutFailure extends Failures {
+  const GeneralSignOutFailure()
+      : super(message: 'An unknown error occurred while trying to sign out.');
+}
+
+class GeneralCheckEmailVerificationFailure extends Failures {
+  const GeneralCheckEmailVerificationFailure()
+      : super(
+            message:
+                'An unknown error occurred while trying to check email verification.');
+}
+
+abstract class SendEmailVerificationFailures extends Failures {
+  const SendEmailVerificationFailures({required super.message});
+}
+
+class GeneralSendEmailVerificationFailure
+    extends SendEmailVerificationFailures {
+  const GeneralSendEmailVerificationFailure()
+      : super(
+            message:
+                'An unknown error occurred while sending email verification.');
+}
+
+class TooManyRequestsSendEmailVerificationFailure
+    extends SendEmailVerificationFailures {
+  const TooManyRequestsSendEmailVerificationFailure()
+      : super(
+            message:
+                'Too many requests have been made. Please wait and try again later.');
 }

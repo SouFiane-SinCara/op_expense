@@ -12,8 +12,9 @@ import 'package:op_expense/core/widgets/app_loading.dart';
 import 'package:op_expense/core/widgets/app_text_form_field.dart';
 import 'package:op_expense/core/widgets/my_app_bar.dart';
 import 'package:op_expense/core/widgets/primary_button.dart';
+import 'package:op_expense/core/widgets/snack_bars.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/sign_up_cubit/sign_up_cubit.dart';
-import 'package:op_expense/features/Authentication/presentation/widgets/Auth_error_widget.dart';
+import 'package:op_expense/features/Authentication/presentation/widgets/auth_error_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -251,12 +252,7 @@ class _SignupScreenState extends State<SignupScreen> {
         mode: LaunchMode.platformDefault,
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to launch URL: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      showErrorSnackBar(context, 'an error occurred');
     }
   }
 }

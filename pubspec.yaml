@@ -44,6 +44,8 @@ flutter:
     - lib/core/assets/icons/Magicons/Outline/User Interface/
     - lib/core/assets/icons/
     - lib/core/assets/icons/Magicons/Glyph/User Interface/
+    - lib/core/assets/images/verification_screen/
+    
 
   fonts:
     - family: Inter

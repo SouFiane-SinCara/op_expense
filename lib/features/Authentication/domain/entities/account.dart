@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 
-
 class Account extends Equatable {
   final String name;
 
@@ -19,6 +18,12 @@ class Account extends Equatable {
     required this.isVerified,
     required this.userId,
   });
+  const Account.empty()
+      : name = '',
+        email = '',
+        password = '',
+        isVerified = false,
+        userId = '';
 
   @override
   List<Object?> get props => [name, email, password, isVerified, userId];

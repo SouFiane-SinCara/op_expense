@@ -18,4 +18,8 @@ abstract class AuthRepository {
       {required String email, required String password});
   Future<Either<Failures, Account>> getLoggedInAccount();
   Future<Either<Failures, Unit>> cacheAccount(Account account);
+
+  Future<Either<Failures, Unit>> signOut();
+  Future<Either<Failures, bool>> checkEmailVerification();
+  Future<Either<Failures, Unit>> sendEmailVerification();
 }

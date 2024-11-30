@@ -1,12 +1,12 @@
 import 'package:hive/hive.dart';
 import 'package:op_expense/core/errors/exceptions.dart';
-import 'package:op_expense/core/errors/failures.dart';
 import 'package:op_expense/features/Authentication/data/models/account_model.dart';
 
 abstract class AuthLocalDataSource {
   Future<AccountModel> getAccount();
   Future<void> cacheAccount(AccountModel accountModel);
   Future<void> deleteAccount();
+  Future<void> verifyEmail();
 }
 
 class AuthLocalDataSourceImpl extends AuthLocalDataSource {
@@ -17,7 +17,6 @@ class AuthLocalDataSourceImpl extends AuthLocalDataSource {
     try {
       final jsonAccount = await accountBox.get(accountKey);
 
-      print("json: " + jsonAccount.toString());
       if (jsonAccount == null) {
         throw const NoAccountLoggedException();
       }
@@ -42,6 +41,17 @@ class AuthLocalDataSourceImpl extends AuthLocalDataSource {
   Future<void> deleteAccount() async {
     try {
       await accountBox.delete(accountKey);
+    } catch (e) {
+      throw const HiveStorageException();
+    }
+  }
+
+  @override
+  Future<void> verifyEmail() async {
+    try {
+      Map account = await accountBox.get(accountKey);
+      account['isVerified'] = true;
+      await accountBox.put(accountKey, account);
     } catch (e) {
       throw const HiveStorageException();
     }
