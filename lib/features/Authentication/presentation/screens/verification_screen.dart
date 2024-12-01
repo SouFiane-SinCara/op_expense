@@ -26,9 +26,11 @@ class VerificationScreen extends StatelessWidget {
 
     return MultiBlocListener(
       listeners: [
+        //!------------ check email verification listener ------------
         BlocListener<CheckEmailVerificationCubit, CheckEmailVerificationState>(
           listener: (context, state) {
             if (state is CheckEmailVerificationSuccess) {
+              // if email is verified navigate to home screen
               if (state.isVerified) {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
@@ -36,37 +38,45 @@ class VerificationScreen extends StatelessWidget {
                   (route) => false,
                 );
               } else {
+                // show warning snackbar if email is not verified
                 showWarningSnackBar(context, 'Email not verified !');
               }
+              // show error snackbar if email verification check fails
             } else if (state is CheckEmailVerificationFailure) {
               showErrorSnackBar(context, state.message);
             }
           },
         ),
+        //!------------ sign out listener ------------
         BlocListener<SignOutCubit, SignOutState>(listener: (context, state) {
+          // if sign out is successful navigate to onboarding screen
           if (state is SignOutSuccess) {
             Navigator.pushNamedAndRemoveUntil(
               context,
               RoutesName.onboardingScreenName,
               (route) => false,
             );
+            // show error snackbar if sign out fails
           } else if (state is SignOutFailure) {
             showErrorSnackBar(context, state.message);
           }
         }),
+        //!------------ send email verification listener ------------
         BlocListener<SendEmailVerificationCubit, SendEmailVerificationState>(
           listener: (context, state) {
+            // show success snackbar if send email verification is sent successfully
             if (state is SendEmailVerificationSuccess) {
               showSuccessSnackBar(context, 'Email verification sent !');
+              // show error snackbar if send email verification fails
             } else if (state is SendEmailVerificationFailure) {
               showErrorSnackBar(context, state.message);
             }
           },
-          child: Container(),
         )
       ],
       child: Scaffold(
         backgroundColor: AppColors.light,
+        //!------------ app bar ------------
         appBar: myAppBar(
           title: 'Verification',
           context: context,
@@ -89,11 +99,13 @@ class VerificationScreen extends StatelessWidget {
             widthSizedBox(5),
           ],
         ),
+
         body: Container(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              //!------------ email verification image ------------
               SizedBox(
                 width: 300.w,
                 height: 400.h,
@@ -106,11 +118,13 @@ class VerificationScreen extends StatelessWidget {
                       'lib/core/assets/images/verification_screen/confirm-email.png'),
                 ),
               ),
+              //!------------ verify your email text ------------
               Text(
                 'Verify your email',
                 style: TextStyles.w700Dark50.copyWith(fontSize: 30.sp),
               ),
               heightSizedBox(20),
+              //!------------ sub title text ------------
               RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
@@ -130,6 +144,7 @@ class VerificationScreen extends StatelessWidget {
                 ),
               ),
               heightSizedBox(20),
+              //!------------ resend email verification button ------------
               PrimaryButton(
                 text: 'Resend Email Verification',
                 onPressed: () {
@@ -138,6 +153,7 @@ class VerificationScreen extends StatelessWidget {
                 },
               ),
               heightSizedBox(20),
+              //!------------ check email verification button ------------
               SecondaryButton(
                 text: 'check email verification',
                 onPressed: () {
@@ -153,24 +169,3 @@ class VerificationScreen extends StatelessWidget {
   }
 }
 
-
-
-
-
-
-
-
-
-
-/**
- * 
-
-  
-"
- * 
- * 
- * 
- * 
- * 
- * 
- */
