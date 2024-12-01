@@ -217,7 +217,17 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
     try {
       await checkConnection();
       await firebaseAuth.currentUser!.reload();
-      return firebaseAuth.currentUser!.emailVerified;
+      bool isVerified = firebaseAuth.currentUser!.emailVerified;
+      if (isVerified) {
+        await firebaseFirestore
+            .collection("users")
+            .doc(firebaseAuth.currentUser!.uid)
+            .update({
+          "isVerified": true,
+        });
+      }
+
+      return isVerified;
     } on NoInternetException {
       throw const NoInternetException();
     } catch (e) {

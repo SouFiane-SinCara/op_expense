@@ -48,7 +48,8 @@ class RouterApp {
                 create: (context) => sl<CheckEmailVerificationCubit>(),
               ),
               BlocProvider(
-                create: (context) => sl<SendEmailVerificationCubit>(),
+                create: (context) =>
+                    sl<SendEmailVerificationCubit>()..sendEmailVerification(),
               ),
             ],
             child: const VerificationScreen(),
