@@ -9,6 +9,7 @@ import 'package:op_expense/features/Authentication/presentation/cubits/login_cub
 import 'package:op_expense/features/Authentication/presentation/cubits/send_email_verification_cubit/send_email_verification_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/sign_out_cubit/sign_out_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/screens/forgot_password_screen.dart';
+import 'package:op_expense/features/Authentication/presentation/screens/forgot_password_sent_screen.dart';
 import 'package:op_expense/features/Authentication/presentation/screens/login_screen.dart';
 import 'package:op_expense/core/widgets/onboarding_screen.dart';
 import 'package:op_expense/features/Authentication/presentation/screens/signup_screen.dart';
@@ -62,6 +63,12 @@ class RouterApp {
           builder: (context) => BlocProvider(
             create: (context) => sl<ForgotPasswordCubit>(),
             child: ForgotPasswordScreen(),
+          ),
+        );
+      case RoutesName.forgetPasswordSentScreenName:
+        return MaterialPageRoute(
+          builder: (context) => ForgotPasswordSentScreen(
+            email: routeSettings.arguments as String,
           ),
         );
       default:

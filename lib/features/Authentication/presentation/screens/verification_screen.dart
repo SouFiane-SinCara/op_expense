@@ -74,94 +74,96 @@ class VerificationScreen extends StatelessWidget {
           },
         )
       ],
-      child: Scaffold(
-        backgroundColor: AppColors.light,
-        //!------------ app bar ------------
-        appBar: myAppBar(
-          title: 'Verification',
-          context: context,
-          actions: [
-            IconButton(
-              onPressed: () {
-                BlocProvider.of<SignOutCubit>(context).signOut();
-              },
-              icon: SizedBox(
-                width: 24.w,
-                child: SvgPicture.asset(
-                  'lib/core/assets/icons/Magicons/Glyph/User Interface/logout.svg',
-                  colorFilter: const ColorFilter.mode(
-                    AppColors.red60,
-                    BlendMode.srcIn,
-                  ),
-                ),
-              ),
-            ),
-            widthSizedBox(5),
-          ],
-        ),
-
-        body: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              //!------------ email verification image ------------
-              SizedBox(
-                width: 300.w,
-                height: 400.h,
-                child: ColorFiltered(
-                  colorFilter: const ColorFilter.mode(
-                    AppColors.violet40,
-                    BlendMode.modulate,
-                  ),
-                  child: Image.asset(
-                      'lib/core/assets/images/verification_screen/confirm-email.png'),
-                ),
-              ),
-              //!------------ verify your email text ------------
-              Text(
-                'Verify your email',
-                style: TextStyles.w700Dark50.copyWith(fontSize: 30.sp),
-              ),
-              heightSizedBox(20),
-              //!------------ sub title text ------------
-              RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  style: TextStyles.w500Dark.copyWith(fontSize: 12.sp),
-                  children: [
-                    const TextSpan(
-                        text:
-                            'We have sent a verification link to your email address '),
-                    TextSpan(
-                      text: account.email,
-                      style: TextStyles.w600Violet100.copyWith(fontSize: 12.sp),
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: AppColors.light,
+          //!------------ app bar ------------
+          appBar: myAppBar(
+            title: 'Verification',
+            context: context,
+            actions: [
+              IconButton(
+                onPressed: () {
+                  BlocProvider.of<SignOutCubit>(context).signOut();
+                },
+                icon: SizedBox(
+                  width: 24.w,
+                  child: SvgPicture.asset(
+                    'lib/core/assets/icons/Magicons/Glyph/User Interface/logout.svg',
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.red60,
+                      BlendMode.srcIn,
                     ),
-                    const TextSpan(
-                        text:
-                            '. Please click on the link to verify your email address.'),
-                  ],
+                  ),
                 ),
               ),
-              heightSizedBox(20),
-              //!------------ resend email verification button ------------
-              PrimaryButton(
-                text: 'Resend Email Verification',
-                onPressed: () {
-                  BlocProvider.of<SendEmailVerificationCubit>(context)
-                      .sendEmailVerification();
-                },
-              ),
-              heightSizedBox(20),
-              //!------------ check email verification button ------------
-              SecondaryButton(
-                text: 'check email verification',
-                onPressed: () {
-                  BlocProvider.of<CheckEmailVerificationCubit>(context)
-                      .checkEmailVerification();
-                },
-              )
+              widthSizedBox(5),
             ],
+          ),
+        
+          body: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                //!------------ email verification image ------------
+                SizedBox(
+                  width: 300.w,
+                  height: 400.h,
+                  child: ColorFiltered(
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.violet40,
+                      BlendMode.modulate,
+                    ),
+                    child: Image.asset(
+                        'lib/core/assets/images/verification_screen/confirm-email.png'),
+                  ),
+                ),
+                //!------------ verify your email text ------------
+                Text(
+                  'Verify your email',
+                  style: TextStyles.w700Dark50.copyWith(fontSize: 30.sp),
+                ),
+                heightSizedBox(20),
+                //!------------ sub title text ------------
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: TextStyles.w500Dark.copyWith(fontSize: 12.sp),
+                    children: [
+                      const TextSpan(
+                          text:
+                              'We have sent a verification link to your email address '),
+                      TextSpan(
+                        text: account.email,
+                        style: TextStyles.w600Violet100.copyWith(fontSize: 12.sp),
+                      ),
+                      const TextSpan(
+                          text:
+                              '. Please click on the link to verify your email address.'),
+                    ],
+                  ),
+                ),
+                heightSizedBox(20),
+                //!------------ resend email verification button ------------
+                PrimaryButton(
+                  text: 'Resend Email Verification',
+                  onPressed: () {
+                    BlocProvider.of<SendEmailVerificationCubit>(context)
+                        .sendEmailVerification();
+                  },
+                ),
+                heightSizedBox(20),
+                //!------------ check email verification button ------------
+                SecondaryButton(
+                  text: 'check email verification',
+                  onPressed: () {
+                    BlocProvider.of<CheckEmailVerificationCubit>(context)
+                        .checkEmailVerification();
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),

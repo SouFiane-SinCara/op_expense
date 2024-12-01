@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:op_expense/core/helpers/sized_boxes.dart';
+import 'package:op_expense/core/router/routes_name.dart';
 import 'package:op_expense/core/theme/app_colors.dart';
 import 'package:op_expense/core/theme/text_styles.dart';
 import 'package:op_expense/core/widgets/app_text_form_field.dart';
@@ -18,49 +19,59 @@ class ForgotPasswordScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ForgotPasswordCubit, ForgotPasswordState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is ForgotPasswordSuccess) {
+          Navigator.pushNamedAndRemoveUntil(context,
+              RoutesName.forgetPasswordSentScreenName, (route) => false,
+              arguments: _emailTextEditingController.text.trim());
+        }
+      },
       builder: (context, state) {
-        return Scaffold(
-          backgroundColor: AppColors.light,
-          //!--------- app bar ------------
-          appBar: myAppBar(title: 'Forgot Password', context: context),
-          //!--------- body ------------
-          body: Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            child: Column(
-              children: [
-                heightSizedBox(70),
-                //!--------- title ------------
-                Text(
-                  '''Don’t worry.
-Enter your email and we’ll send you a link to reset your password.''',
-                  style: TextStyles.w600Dark.copyWith(fontSize: 24.sp),
-                ),
-                heightSizedBox(46),
-                if (state is ForgotPasswordFailure)
-                  Column(
-                    children: [
-                      //!--------- error message ------------
-                      AuthErrorWidget(message: state.message),
-                      heightSizedBox(16),
-                    ],
-                  ),
-                //!--------- email text field ------------
-                AppTextFormField(
-                    hintText: 'Email', controller: _emailTextEditingController),
+        return SafeArea(
+          child: Scaffold(
+            backgroundColor: AppColors.light,
+            //!--------- app bar ------------
+            appBar: myAppBar(title: 'Forgot Password', context: context),
+            //!--------- body ------------
+            body: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    heightSizedBox(70),
+                    //!--------- title ------------
+                    Text(
+                      "Don’t worry.\nEnter your email and we’ll send you a link to reset your password.",
+                      style: TextStyles.w600Dark.copyWith(fontSize: 24.sp),
+                    ),
+                    heightSizedBox(46),
+                    if (state is ForgotPasswordFailure)
+                      Column(
+                        children: [
+                          //!--------- error message ------------
+                          AuthErrorWidget(message: state.message),
+                          heightSizedBox(16),
+                        ],
+                      ),
+                    //!--------- email text field ------------
+                    AppTextFormField(
+                        hintText: 'Email',
+                        controller: _emailTextEditingController),
 
-                heightSizedBox(32),
-                //!--------- continue button ------------
-                PrimaryButton(
-                  text: 'Continue',
-                  onPressed: () {
-                    // send reset password
-                    BlocProvider.of<ForgotPasswordCubit>(context)
-                        .sendResetPassword(
-                            _emailTextEditingController.text.trim());
-                  },
+                    heightSizedBox(32),
+                    //!--------- continue button ------------
+                    PrimaryButton(
+                      text: 'Continue',
+                      onPressed: () {
+                        // send reset password
+                        BlocProvider.of<ForgotPasswordCubit>(context)
+                            .sendResetPassword(
+                                _emailTextEditingController.text.trim());
+                      },
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         );
