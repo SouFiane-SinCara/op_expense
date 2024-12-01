@@ -6,24 +6,41 @@ import 'package:hive/hive.dart';
 import 'package:op_expense/core/errors/exceptions.dart';
 import 'package:op_expense/features/Authentication/data/models/account_model.dart';
 
+// Abstract class defining the methods for authentication data source
 abstract class AuthRemoteDataSource {
+  // Method to sign up with email and password
   Future<AccountModel> signUpWithEmailPassword({
     required String email,
     required String password,
     required String name,
   });
+
+  // Method to sign up with Google
   Future<AccountModel> signUpWithGoogle();
+
+  // Method to log in with email and password
   Future<AccountModel> login({required String email, required String password});
+
+  // Method to sign out
   Future<void> signOut();
+
+  // Method to check email verification status
   Future<bool> checkEmailVerification();
+
+  // Method to send email verification
   Future<void> sendEmailVerification();
+
+  // Method to reset password
+  Future<void> sendResetPassword(String email);
 }
 
+// Implementation of AuthRemoteDataSource using Firebase
 class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
   Connectivity connectivity;
   FirebaseAuth firebaseAuth;
   FirebaseFirestore firebaseFirestore;
   GoogleSignIn googleSignIn;
+
   AuthFireBaseRemoteDataSource({
     required this.firebaseAuth,
     required this.firebaseFirestore,
@@ -31,6 +48,7 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
     required this.connectivity,
   });
 
+  // Method to check internet connection
   Future checkConnection() async {
     final result = await connectivity.checkConnectivity();
     if (result.last == ConnectivityResult.none) {
@@ -46,10 +64,11 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
     try {
       await checkConnection();
 
-      //!----------- create a user in firebase auth -----------------
+      // Create a user in Firebase Auth
       UserCredential userCredential = await firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password);
-      //!------------- create a user in firebase firestore -------------------
+
+      // Create a user in Firebase Firestore
       AccountModel accountModel = AccountModel(
         name: name,
         email: email,
@@ -66,6 +85,7 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
 
       return accountModel;
     } on FirebaseAuthException catch (authError) {
+      // Handle Firebase Auth exceptions
       switch (authError.code) {
         case "email-already-in-use":
           throw const EmailAlreadyInUseException();
@@ -147,6 +167,7 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
 
       return accountModel;
     } on FirebaseAuthException catch (authError) {
+      // Handle Firebase Auth exceptions
       switch (authError.code) {
         case "email-not-found":
           throw const EmailNotFoundException();
@@ -210,7 +231,6 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
       await checkConnection();
       await firebaseAuth.currentUser!.sendEmailVerification();
     } on FirebaseAuthException catch (e) {
-  
       if (e.code == "too-many-requests") {
         throw const TooManyRequestsSendEmailVerificationException();
       }
@@ -219,6 +239,29 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
       throw const NoInternetException();
     } catch (e) {
       throw const GeneralSendEmailVerificationException();
+    }
+  }
+
+  @override
+  // Method to reset password
+  Future<void> sendResetPassword(String email) async {
+    try {
+      await checkConnection();
+      await firebaseAuth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        throw const UserNotFoundResetPasswordException();
+      } else if (e.code == 'too-many-requests') {
+        throw const TooManyRequestsResetPasswordException();
+      } else if (e.code == 'invalid-email') {
+        throw const InvalidEmailException();
+      } else {
+        throw const GeneralResetPasswordException();
+      }
+    } on NoInternetException {
+      throw const NoInternetException();
+    } catch (e) {
+      throw const GeneralResetPasswordException();
     }
   }
 }

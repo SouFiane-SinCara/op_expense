@@ -168,4 +168,3 @@ class VerificationScreen extends StatelessWidget {
     );
   }
 }
-

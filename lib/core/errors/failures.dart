@@ -203,3 +203,42 @@ class TooManyRequestsSendEmailVerificationFailure
             message:
                 'Too many requests have been made. Please wait and try again later.');
 }
+
+abstract class ResetPasswordFailures extends Failures {
+  const ResetPasswordFailures({required super.message});
+}
+
+class GeneralResetPasswordFailure extends ResetPasswordFailures {
+  const GeneralResetPasswordFailure()
+      : super(
+            message:
+                'An unknown error occurred while trying to reset password.');
+}
+
+class TooManyRequestsResetPasswordFailure extends ResetPasswordFailures {
+  const TooManyRequestsResetPasswordFailure()
+      : super(
+            message:
+                'Too many requests have been made. Please wait and try again later.');
+}
+
+class InvalidEmailResetPasswordFailure extends ResetPasswordFailures {
+  const InvalidEmailResetPasswordFailure()
+      : super(
+            message:
+                'The email address provided is invalid. Please check and try again.');
+}
+
+class UserNotFoundResetPasswordFailure extends ResetPasswordFailures {
+  const UserNotFoundResetPasswordFailure()
+      : super(
+            message:
+                'No user found for the given email address. Please try again.');
+}
+
+class EmptyForgotPasswordFieldsFailure extends ResetPasswordFailures {
+  const EmptyForgotPasswordFieldsFailure()
+      : super(
+            message:
+                'The email field is required. Please fill out the email field and try again.');
+}

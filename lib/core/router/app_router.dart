@@ -4,9 +4,11 @@ import 'package:op_expense/core/router/routes_name.dart';
 import 'package:op_expense/core/services/dependency_injection.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/authentication_cubit/authentication_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/check_email_verification_cubit/check_email_verification_cubit.dart';
+import 'package:op_expense/features/Authentication/presentation/cubits/forgot_password_cubit/forgot_password_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/login_cubit/login_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/send_email_verification_cubit/send_email_verification_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/sign_out_cubit/sign_out_cubit.dart';
+import 'package:op_expense/features/Authentication/presentation/screens/forgot_password_screen.dart';
 import 'package:op_expense/features/Authentication/presentation/screens/login_screen.dart';
 import 'package:op_expense/core/widgets/onboarding_screen.dart';
 import 'package:op_expense/features/Authentication/presentation/screens/signup_screen.dart';
@@ -43,11 +45,9 @@ class RouterApp {
               ),
               BlocProvider(
                 create: (context) => sl<CheckEmailVerificationCubit>(),
-
               ),
               BlocProvider(
                 create: (context) => sl<SendEmailVerificationCubit>(),
-
               ),
             ],
             child: const VerificationScreen(),
@@ -56,6 +56,13 @@ class RouterApp {
       case RoutesName.homeScreenName:
         return MaterialPageRoute(
           builder: (context) => const HomeScreen(),
+        );
+      case RoutesName.forgotPasswordScreenName:
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) => sl<ForgotPasswordCubit>(),
+            child: ForgotPasswordScreen(),
+          ),
         );
       default:
         return MaterialPageRoute(

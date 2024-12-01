@@ -21,6 +21,8 @@ class SignUpWithEmailPasswordUseCase {
       return left(const InvalidUsernameFailure());
     } else if (!isAcceptedTerms) {
       return left(DeclinedTermsAndConditionsFailure());
+    } else if (AppConstants.emailRegExp.hasMatch(email) == false) {
+      return left(const InvalidEmailSignUpFailure());
     }
     return await authRepository.signUpWithEmailPassword(
         email: email, password: password, name: name);

@@ -10,16 +10,16 @@ abstract class AuthRepository {
 
   AuthRepository(
       {required this.authRemoteDataSource, required this.authLocalDataSource});
+
   Future<Either<Failures, Account>> signUpWithEmailPassword(
       {required String email, required String password, required String name});
   Future<Either<Failures, Account>> signUpWithGoogle();
-
   Future<Either<Failures, Account>> login(
       {required String email, required String password});
   Future<Either<Failures, Account>> getLoggedInAccount();
   Future<Either<Failures, Unit>> cacheAccount(Account account);
-
   Future<Either<Failures, Unit>> signOut();
   Future<Either<Failures, bool>> checkEmailVerification();
   Future<Either<Failures, Unit>> sendEmailVerification();
+  Future<Either<Failures, Unit>> sendResetPassword(String email);
 }
