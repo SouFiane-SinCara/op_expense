@@ -89,10 +89,16 @@ class LoginScreen extends StatelessWidget {
                         ),
                         heightSizedBox(33),
                         //!--------- Forgot Password ------------
-                        Text(
-                          'Forgot Password?',
-                          style: TextStyles.w600Violet100.copyWith(
-                            fontSize: 18.sp,
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(
+                                context, RoutesName.forgotPasswordScreenName);
+                          },
+                          child: Text(
+                            'Forgot Password?',
+                            style: TextStyles.w600Violet100.copyWith(
+                              fontSize: 18.sp,
+                            ),
                           ),
                         ),
                         //!--------- Don't have an account yet? Sign up------------

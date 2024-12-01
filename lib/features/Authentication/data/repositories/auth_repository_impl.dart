@@ -157,4 +157,20 @@ class AuthRepositoryImpl extends AuthRepository {
       return left(const GeneralSendEmailVerificationFailure());
     }
   }
+
+  @override
+  Future<Either<Failures, Unit>> sendResetPassword(String email) async {
+    try {
+      await authRemoteDataSource.sendResetPassword(email);
+      return right(unit);
+    } on NoInternetException {
+      return left(const NoInternetFailure());
+    } on UserNotFoundResetPasswordException {
+      return left(const UserNotFoundResetPasswordFailure());
+    } on TooManyRequestsResetPasswordException {
+      return left(const TooManyRequestsResetPasswordFailure());
+    } catch (e) {
+      return left(const GeneralResetPasswordFailure());
+    }
+  }
 }

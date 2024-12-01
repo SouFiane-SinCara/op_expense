@@ -1,4 +1,3 @@
-
 abstract class Exceptions {
   final String code;
   const Exceptions({required this.code});
@@ -176,4 +175,23 @@ class TooManyRequestsSendEmailVerificationException
     extends SendEmailVerificationExceptions {
   const TooManyRequestsSendEmailVerificationException()
       : super(code: 'too-many-requests-send-email-verification-error');
+}
+
+abstract class ResetPasswordExceptions extends Exceptions {
+  const ResetPasswordExceptions({required super.code});
+}
+
+class GeneralResetPasswordException extends ResetPasswordExceptions {
+  const GeneralResetPasswordException()
+      : super(code: 'general-reset-password-error');
+}
+
+class TooManyRequestsResetPasswordException extends ResetPasswordExceptions {
+  const TooManyRequestsResetPasswordException()
+      : super(code: 'too-many-requests-reset-password-error');
+}
+
+class UserNotFoundResetPasswordException extends ResetPasswordExceptions {
+  const UserNotFoundResetPasswordException()
+      : super(code: 'user-not-found-reset-password-error');
 }
