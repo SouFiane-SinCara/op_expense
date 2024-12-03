@@ -17,6 +17,11 @@ import 'package:op_expense/features/Authentication/presentation/cubits/login_cub
 import 'package:op_expense/features/Authentication/presentation/cubits/send_email_verification_cubit/send_email_verification_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/sign_out_cubit/sign_out_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/sign_up_cubit/sign_up_cubit.dart';
+import 'package:op_expense/features/main/data/data_sources/main_local_data_source.dart';
+import 'package:op_expense/features/main/data/data_sources/main_remote_data_source.dart';
+import 'package:op_expense/features/main/data/repositories_impl/main_repository_impl.dart';
+import 'package:op_expense/features/main/domain/repositories/main_repository.dart';
+import 'package:op_expense/features/main/presentation/cubits/payment_sources_cubit/payment_sources_cubit.dart';
 
 GetIt sl = GetIt.instance;
 void setup() {
@@ -31,7 +36,7 @@ void setup() {
       () => LoginCubit(
           loginUseCase: sl(), authRepository: sl(), authenticationCubit: sl()),
     )
-    ..registerFactory(
+    ..registerLazySingleton(
       () => AuthenticationCubit(),
     )
     ..registerFactory(
@@ -87,5 +92,35 @@ void setup() {
     )
     ..registerLazySingleton(
       () => GoogleSignIn(),
+    );
+
+  //!------------ Main feature --------------
+
+  sl
+    //*-------- controller ----------
+    ..registerFactory(
+      () => PaymentSourcesCubit(
+        mainRepository: sl(),
+      ),
+    )
+    //*-------- repository ----------
+    ..registerLazySingleton<MainRepository>(
+      () => MainRepositoryImpl(
+        mainLocalDataSource: sl(),
+        mainRemoteDataSource: sl(),
+      ),
+    )
+    //*-------- data source ----------
+    ..registerLazySingleton<MainRemoteDataSource>(
+      () => MainRemoteDataSourceFirebase(
+        connectivity: sl(),
+        firebaseFirestore: sl(),
+      ),
+    )
+    ..registerLazySingleton<MainLocalDataSource>(
+      () => MainLocalDataSourceHive(),
+
+      //*-------- services  ----------
+      //some services already registered in the auth feature
     );
 }

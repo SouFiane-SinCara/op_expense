@@ -14,6 +14,7 @@ import 'package:op_expense/features/Authentication/presentation/screens/login_sc
 import 'package:op_expense/core/widgets/onboarding_screen.dart';
 import 'package:op_expense/features/Authentication/presentation/screens/signup_screen.dart';
 import 'package:op_expense/features/Authentication/presentation/screens/verification_screen.dart';
+import 'package:op_expense/features/main/presentation/cubits/payment_sources_cubit/payment_sources_cubit.dart';
 import 'package:op_expense/features/main/presentation/screens/home_screen.dart';
 
 class RouterApp {
@@ -38,9 +39,6 @@ class RouterApp {
         return MaterialPageRoute(
           builder: (context) => MultiBlocProvider(
             providers: [
-              BlocProvider(
-                create: (context) => sl<AuthenticationCubit>(),
-              ),
               BlocProvider(
                 create: (context) => sl<SignOutCubit>(),
               ),

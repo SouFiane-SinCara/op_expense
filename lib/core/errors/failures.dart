@@ -242,3 +242,20 @@ class EmptyForgotPasswordFieldsFailure extends ResetPasswordFailures {
             message:
                 'The email field is required. Please fill out the email field and try again.');
 }
+
+abstract class GetPaymentSourcesFailures extends Failures {
+  const GetPaymentSourcesFailures({required super.message});
+}
+
+class NoPaymentSourcesFailure extends GetPaymentSourcesFailures {
+  const NoPaymentSourcesFailure()
+      : super(message: 'No payment sources found for this account.');
+}
+
+class GeneralGetPaymentSourcesFailure extends GetPaymentSourcesFailures {
+  const GeneralGetPaymentSourcesFailure()
+      : super(
+            message:
+                'An unknown error occurred while trying to get payment sources.');
+}
+

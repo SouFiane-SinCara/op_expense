@@ -195,3 +195,23 @@ class UserNotFoundResetPasswordException extends ResetPasswordExceptions {
   const UserNotFoundResetPasswordException()
       : super(code: 'user-not-found-reset-password-error');
 }
+
+
+abstract class GetPaymentSourcesExceptions extends Exceptions {
+  const GetPaymentSourcesExceptions({required super.code});
+}
+
+class GeneralGetPaymentSourcesException extends GetPaymentSourcesExceptions {
+  const GeneralGetPaymentSourcesException()
+      : super(code: 'general-get-payment-sources-error');
+}
+
+class NoPaymentSourcesException extends GetPaymentSourcesExceptions {
+  const NoPaymentSourcesException()
+      : super(code: 'no-payment-sources-error');
+}
+
+class NoPaymentSourcesLocallyException extends GetPaymentSourcesExceptions {
+  const NoPaymentSourcesLocallyException()
+      : super(code: 'no-payment-sources-localy-error');
+}
