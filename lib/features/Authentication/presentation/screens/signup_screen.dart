@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,6 +17,8 @@ import 'package:op_expense/core/widgets/primary_button.dart';
 import 'package:op_expense/core/widgets/snack_bars.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/sign_up_cubit/sign_up_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/widgets/auth_error_widget.dart';
+import 'package:op_expense/features/main/domain/entities/payment_source.dart';
+import 'package:op_expense/features/main/presentation/cubits/payment_sources_cubit/payment_sources_cubit.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -25,23 +29,30 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  final TextEditingController _nameTextEditingController =
-      TextEditingController();
+  late TextEditingController _nameTextEditingController;
 
-  final TextEditingController _emailTextEditingController =
-      TextEditingController();
+  late TextEditingController _emailTextEditingController;
 
-  final TextEditingController _passwordTextEditingController =
-      TextEditingController();
+  late TextEditingController _passwordTextEditingController;
   @override
   void initState() {
     super.initState();
+    _nameTextEditingController = TextEditingController();
+    _emailTextEditingController = TextEditingController();
+    _passwordTextEditingController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _nameTextEditingController.dispose();
+    _emailTextEditingController.dispose();
+    _passwordTextEditingController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     bool termsAccepted = false;
-
     return BlocProvider(
       create: (context) => sl<SignUpCubit>(),
       child: SafeArea(
@@ -52,7 +63,7 @@ class _SignupScreenState extends State<SignupScreen> {
             context: context,
           ),
           body: BlocConsumer<SignUpCubit, SignUpState>(
-            listener: (context, state) {
+            listener: (context, state) async {
               if (state is SignUpWithEmailPasswordSuccessState) {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
@@ -60,11 +71,22 @@ class _SignupScreenState extends State<SignupScreen> {
                   (route) => false,
                 );
               } else if (state is SignUpWithGoogleSuccessState) {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  RoutesName.homeScreenName,
-                  (route) => false,
-                );
+                List<PaymentSource> paymentSources =
+                    await BlocProvider.of<PaymentSourcesCubit>(context)
+                        .getPaymentSources(account: state.account);
+                if (paymentSources.isEmpty) {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    RoutesName.setupWalletScreenName,
+                    (route) => false,
+                  );
+                } else {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    RoutesName.homeScreenName,
+                    (route) => false,
+                  );
+                }
               }
             },
             builder: (context, state) {

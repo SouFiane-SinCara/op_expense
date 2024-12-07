@@ -138,7 +138,7 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
           .set(
             account.toJson(),
           );
-      await sendEmailVerification();
+
       return account;
     } on FirebaseException {
       throw const GeneralFireStoreException();

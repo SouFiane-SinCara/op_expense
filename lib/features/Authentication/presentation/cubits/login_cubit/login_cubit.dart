@@ -13,6 +13,7 @@ class LoginCubit extends Cubit<LoginState> {
   LoginUseCase loginUseCase;
   AuthRepository authRepository;
   AuthenticationCubit authenticationCubit;
+
   LoginCubit(
       {required this.loginUseCase,
       required this.authRepository,

@@ -63,4 +63,8 @@ class TextStyles {
       fontFamily: fontFamily,
       color: AppColors.dark25,
       fontWeight: FontWeight.w500);
+   static const TextStyle w500Dark50 = TextStyle(
+      fontFamily: fontFamily,
+      color: AppColors.dark50,
+      fontWeight: FontWeight.w500);
 }

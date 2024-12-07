@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,13 +14,33 @@ import 'package:op_expense/core/widgets/my_app_bar.dart';
 import 'package:op_expense/core/widgets/primary_button.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/login_cubit/login_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/widgets/auth_error_widget.dart';
+import 'package:op_expense/features/main/domain/entities/payment_source.dart';
+import 'package:op_expense/features/main/presentation/cubits/payment_sources_cubit/payment_sources_cubit.dart';
 
-class LoginScreen extends StatelessWidget {
-  final TextEditingController _emailTextEditingController =
-      TextEditingController();
-  final TextEditingController _passwordTextEditingController =
-      TextEditingController();
-  LoginScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  late TextEditingController _emailTextEditingController;
+
+  late TextEditingController _passwordTextEditingController;
+  @override
+  void initState() {
+    super.initState();
+    _emailTextEditingController = TextEditingController();
+    _passwordTextEditingController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _emailTextEditingController.dispose();
+    _passwordTextEditingController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,16 +54,31 @@ class LoginScreen extends StatelessWidget {
             context: context,
           ),
           body: BlocConsumer<LoginCubit, LoginState>(
-            listener: (context, state) {
+            listener: (context, state) async {
               if (state is LoginSuccessState) {
-                state.account.isVerified
-                    ? Navigator.pushNamedAndRemoveUntil(
-                        context, RoutesName.homeScreenName, (route) => false)
-                    : Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        RoutesName.verificationScreenName,
-                        (route) => false,
-                      );
+                if (state.account.isVerified) {
+                  List<PaymentSource> paymentSources =
+                      await BlocProvider.of<PaymentSourcesCubit>(context)
+                          .getPaymentSources(account: state.account);
+                  if (paymentSources.isEmpty) {
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      RoutesName.setupWalletScreenName,
+                      (route) => false,
+                    );
+                  } else {
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      RoutesName.homeScreenName,
+                      (route) => false,
+                    );
+                  }
+                } else {
+                  Navigator.pushReplacementNamed(
+                    context,
+                    RoutesName.verificationScreenName,
+                  );
+                }
               }
             },
             builder: (context, state) {

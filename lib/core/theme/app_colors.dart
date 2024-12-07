@@ -34,7 +34,7 @@ class AppColors {
   static const Color green20 = Color(0xFFC8E6C9);
   static const Color green40 = Color(0xFF81C784);
   static const Color green60 = Color(0xFF4CAF50);
-  static const Color green80 = Color(0xFF388E3C);
+  static const Color green80 = Color(0xFF00A86B);
   static const Color green100 = Color(0xFF1B5E20);
 
   // Yellow Colors

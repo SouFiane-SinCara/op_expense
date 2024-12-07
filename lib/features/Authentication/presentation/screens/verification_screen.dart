@@ -34,7 +34,7 @@ class VerificationScreen extends StatelessWidget {
               if (state.isVerified) {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
-                  RoutesName.homeScreenName,
+                  RoutesName.setupWalletScreenName,
                   (route) => false,
                 );
               } else {
@@ -100,7 +100,7 @@ class VerificationScreen extends StatelessWidget {
               widthSizedBox(5),
             ],
           ),
-        
+
           body: Container(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: Column(
@@ -136,7 +136,8 @@ class VerificationScreen extends StatelessWidget {
                               'We have sent a verification link to your email address '),
                       TextSpan(
                         text: account.email,
-                        style: TextStyles.w600Violet100.copyWith(fontSize: 12.sp),
+                        style:
+                            TextStyles.w600Violet100.copyWith(fontSize: 12.sp),
                       ),
                       const TextSpan(
                           text:
