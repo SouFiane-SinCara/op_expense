@@ -1,14 +1,22 @@
 import 'package:dartz/dartz.dart';
 import 'package:op_expense/core/errors/exceptions.dart';
 import 'package:op_expense/core/errors/failures.dart';
+import 'package:op_expense/features/Authentication/data/data_sources/auth_local_data_source.dart';
+import 'package:op_expense/features/Authentication/data/data_sources/auth_remote_data_source.dart';
 import 'package:op_expense/features/Authentication/data/models/account_model.dart';
 import 'package:op_expense/features/Authentication/domain/entities/account.dart';
 import 'package:op_expense/features/Authentication/domain/repositories/auth_repository.dart';
+import 'package:op_expense/features/main/data/data_sources/main_local_data_source.dart';
 
 class AuthRepositoryImpl extends AuthRepository {
+  final AuthRemoteDataSource authRemoteDataSource;
+  final AuthLocalDataSource authLocalDataSource;
+  final MainLocalDataSource mainLocalDataSource;
+
   AuthRepositoryImpl(
-      {required super.authRemoteDataSource,
-      required super.authLocalDataSource});
+      {required this.authRemoteDataSource,
+      required this.mainLocalDataSource,
+      required this.authLocalDataSource});
 
   @override
   Future<Either<Failures, Account>> signUpWithEmailPassword(
@@ -120,7 +128,9 @@ class AuthRepositoryImpl extends AuthRepository {
   Future<Either<Failures, Unit>> signOut() async {
     try {
       await authRemoteDataSource.signOut();
+      // Clear all local data maybe the user will login with a different account
       await authLocalDataSource.deleteAccount();
+      await mainLocalDataSource.removeAllPaymentSources();
       return right(unit);
     } on NoInternetException {
       return left(const NoInternetFailure());

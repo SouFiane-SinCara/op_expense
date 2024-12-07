@@ -28,7 +28,9 @@ class OpExpenseApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // general providers for the app
     return BlocProvider(
+      // authentication cubit provider have signed or logged user account details
       create: (context) => sl<AuthenticationCubit>(),
       child: ScreenUtilInit(
         designSize: const Size(375, 812),

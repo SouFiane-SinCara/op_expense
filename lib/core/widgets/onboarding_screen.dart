@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +12,8 @@ import 'package:op_expense/core/widgets/app_loading.dart';
 import 'package:op_expense/core/widgets/primary_button.dart';
 import 'package:op_expense/core/widgets/secondary_button.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/login_cubit/login_cubit.dart';
+import 'package:op_expense/features/main/domain/entities/payment_source.dart';
+import 'package:op_expense/features/main/presentation/cubits/payment_sources_cubit/payment_sources_cubit.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -26,11 +30,29 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<LoginCubit, LoginState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is LoginSuccessState) {
-          state.account.isVerified
-              ? Navigator.pushReplacementNamed(context, RoutesName.homeScreenName)
-              : Navigator.pushReplacementNamed(context, RoutesName.verificationScreenName);
+          if (state.account.isVerified) {
+            List<PaymentSource> paymentSources =
+                await BlocProvider.of<PaymentSourcesCubit>(context)
+                    .getPaymentSources(account: state.account);
+            if (paymentSources.isEmpty) {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                RoutesName.setupWalletScreenName,
+                (route) => false,
+              );
+            } else {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                RoutesName.homeScreenName,
+                (route) => false,
+              );
+            }
+          } else {
+            Navigator.pushReplacementNamed(
+                context, RoutesName.verificationScreenName);
+          }
         }
       },
       builder: (context, state) {
@@ -41,6 +63,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           default:
             return SafeArea(
               child: Scaffold(
+                resizeToAvoidBottomInset: false,
                 body: Container(
                   width: double.infinity,
                   height: double.infinity,

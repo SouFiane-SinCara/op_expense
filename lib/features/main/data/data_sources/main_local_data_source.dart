@@ -6,6 +6,8 @@ abstract class MainLocalDataSource {
   Future<void> storagePaymentSources(
       {required List<PaymentSourceModel> paymentSources});
   Future<List<PaymentSourceModel>> getPaymentSources();
+  Future<void> addNewPaymentSource({required PaymentSourceModel paymentSource});
+  Future<void> removeAllPaymentSources();
 }
 
 class MainLocalDataSourceHive extends MainLocalDataSource {
@@ -21,20 +23,48 @@ class MainLocalDataSourceHive extends MainLocalDataSource {
     } catch (e) {
       throw const HiveStorageException();
     }
-    throw UnimplementedError();
   }
 
   @override
   Future<List<PaymentSourceModel>> getPaymentSources() async {
     try {
-      List<Map> paymentSourcesJson =
-          await paymentSourcesBox.get(paymentSourcesKey);
-      if (paymentSourcesJson.isEmpty) {
+      final paymentSourcesJson = await paymentSourcesBox.get(paymentSourcesKey);
+
+      if (paymentSourcesJson == null || paymentSourcesJson.isEmpty) {
         throw const NoPaymentSourcesLocallyException();
       }
+
       return paymentSourcesJson
-          .map((e) => PaymentSourceModel.fromJson(e))
+          .map<PaymentSourceModel>((e) => PaymentSourceModel.fromJson(e))
           .toList();
+    } on NoPaymentSourcesLocallyException {
+      throw const NoPaymentSourcesLocallyException();
+    } catch (e) {
+      throw const HiveStorageException();
+    }
+  }
+
+  @override
+  Future<void> addNewPaymentSource(
+      {required PaymentSourceModel paymentSource}) async {
+    List<PaymentSourceModel> paymentSources = [];
+    try {
+      paymentSources = await getPaymentSources();
+    } catch (e) {
+      try {
+        paymentSources.add(paymentSource);
+        await paymentSourcesBox.put(
+            paymentSourcesKey, paymentSources.map((e) => e.toJson()).toList());
+      } catch (e) {
+        throw const HiveStorageException();
+      }
+    }
+  }
+
+  @override
+  Future<void> removeAllPaymentSources() async {
+    try {
+      await paymentSourcesBox.delete(paymentSourcesKey);
     } catch (e) {
       throw const HiveStorageException();
     }

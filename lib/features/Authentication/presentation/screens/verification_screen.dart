@@ -34,7 +34,7 @@ class VerificationScreen extends StatelessWidget {
               if (state.isVerified) {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
-                  RoutesName.homeScreenName,
+                  RoutesName.setupWalletScreenName,
                   (route) => false,
                 );
               } else {

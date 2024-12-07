@@ -7,6 +7,8 @@ import 'package:op_expense/features/main/data/models/payment_source_model.dart';
 abstract class MainRemoteDataSource {
   Future<List<PaymentSourceModel>> getPaymentSources(
       {required Account account});
+  Future<void> addNewPaymentSource(
+      {required Account account, required PaymentSourceModel paymentSource});
 }
 
 class MainRemoteDataSourceFirebase extends MainRemoteDataSource {
@@ -52,6 +54,24 @@ class MainRemoteDataSourceFirebase extends MainRemoteDataSource {
       throw const NoInternetException();
     } catch (e) {
       throw const GeneralGetPaymentSourcesException();
+    }
+  }
+
+  @override
+  Future<void> addNewPaymentSource(
+      {required Account account,
+      required PaymentSourceModel paymentSource}) async {
+    try {
+      checkConnection();
+      await firebaseFirestore
+          .collection('users')
+          .doc(account.userId)
+          .collection('wallet')
+          .add(paymentSource.toJson());
+    } on NoInternetException {
+      throw const NoInternetException();
+    } catch (e) {
+      throw const GeneralAddNewPaymentSourceException();
     }
   }
 }

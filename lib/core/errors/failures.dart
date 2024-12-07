@@ -259,3 +259,30 @@ class GeneralGetPaymentSourcesFailure extends GetPaymentSourcesFailures {
                 'An unknown error occurred while trying to get payment sources.');
 }
 
+abstract class AddNewPaymentSourceFailures extends Failures {
+  const AddNewPaymentSourceFailures({required super.message});
+}
+
+class GeneralAddNewPaymentSourceFailure extends AddNewPaymentSourceFailures {
+  const GeneralAddNewPaymentSourceFailure()
+      : super(
+            message:
+                'An unknown error occurred while trying to add a new payment source.');
+}
+
+class PaymentSourceTypeNotSelectedFailure extends AddNewPaymentSourceFailures {
+  const PaymentSourceTypeNotSelectedFailure()
+      : super(message: 'Please select a account type before proceeding.');
+}
+
+class ProviderLogoNotSelectedFailure extends AddNewPaymentSourceFailures {
+  const ProviderLogoNotSelectedFailure()
+      : super(message: 'Please select a provider before proceeding.');
+}
+
+class EmptyNameAddNewPaymentSourceFailure extends AddNewPaymentSourceFailures {
+  const EmptyNameAddNewPaymentSourceFailure()
+      : super(
+            message:
+                'The name field is required. Please fill out the name field and try again.');
+}

@@ -7,6 +7,7 @@ import 'package:op_expense/core/theme/text_styles.dart';
 // MyAppBar widget is used to display the title and navigation icon at the top of the screen. The MyAppBar
 AppBar myAppBar({
   required String title,
+  TextStyle? titleStyle,
   void Function()? onPressedLeading,
   Color? backgroundColor,
   Color? iconColor,
@@ -40,7 +41,7 @@ AppBar myAppBar({
     centerTitle: true,
     title: Text(
       title,
-      style: TextStyles.w600Dark50.copyWith(fontSize: 18.sp),
+      style: titleStyle ?? TextStyles.w600Dark50.copyWith(fontSize: 18.sp),
     ),
   );
 }

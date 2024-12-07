@@ -46,6 +46,9 @@ flutter:
     - lib/core/assets/icons/Magicons/Glyph/User Interface/
     - lib/core/assets/images/verification_screen/
     - lib/core/assets/images/forgot_password_sent_screen/
+    - lib/core/assets/icons/Magicons/Glyph/Arrow/
+    - lib/core/assets/images/setup_wallet/
+     
 
   fonts:
     - family: Inter

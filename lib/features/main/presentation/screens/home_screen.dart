@@ -5,7 +5,6 @@ import 'package:op_expense/core/widgets/my_app_bar.dart';
 import 'package:op_expense/features/Authentication/domain/entities/account.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/authentication_cubit/authentication_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/sign_out_cubit/sign_out_cubit.dart';
-import 'package:op_expense/features/main/domain/entities/payments_source_types.dart';
 import 'package:op_expense/features/main/presentation/cubits/payment_sources_cubit/payment_sources_cubit.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -19,16 +18,9 @@ class HomeScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) =>
           sl<PaymentSourcesCubit>()..getPaymentSources(account: account),
-      child: BlocListener<PaymentSourcesCubit, PaymentSourcesState>(
-        listener: (context, state) {
-          if (state is PaymentSourcesError) {
-            //TODO : NAVIGAT TO START NEW WALLET SCREEN IF NO PAYMENT SOURCE BUT FIRST COMMIT THE CODE
-          } else if (state is PaymentSourcesLoaded) {
-
-            
-          }
-        },
+      child: SafeArea(
         child: Scaffold(
+          backgroundColor: Colors.red,
           appBar: myAppBar(title: 'Home Screen', context: context),
           body: Center(
             child: GestureDetector(

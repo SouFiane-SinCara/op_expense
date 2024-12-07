@@ -22,7 +22,7 @@ extension PaymentsSourceExtensions on PaymentsSourceTypes {
           'lib/core/assets/images/setup_wallet/chase-bank.png',
           'lib/core/assets/images/setup_wallet/Bank-of-America-Emblem.png',
           'lib/core/assets/images/setup_wallet/Wells-Fargo-Emblem.png',
-          'lib/core/assets/images/setup_wallet/barclays-Logo.wine.png',
+          'lib/core/assets/images/setup_wallet/Barclays-Logo.wine.png',
           'lib/core/assets/images/setup_wallet/bank-hsbc.png',
         ];
       case PaymentsSourceTypes.mobileWallet:
@@ -35,17 +35,31 @@ extension PaymentsSourceExtensions on PaymentsSourceTypes {
           'lib/core/assets/images/setup_wallet/Venmo_logo.png',
         ];
       case PaymentsSourceTypes.cash:
-        return [
-          // Add a placeholder cash icon if available.
-          'lib/core/assets/images/setup_wallet/cash.png',
-        ];
+        return [];
       default:
         return [];
     }
   }
 }
 
-extension PaymentsSourceTypesExtension on String{
+extension PaymentSourceTypesExtension on PaymentsSourceTypes {
+  String get toShortString {
+    switch (this) {
+      case PaymentsSourceTypes.creditCard:
+        return 'Credit Card';
+      case PaymentsSourceTypes.cash:
+        return 'Cash';
+      case PaymentsSourceTypes.bank:
+        return 'Bank';
+      case PaymentsSourceTypes.mobileWallet:
+        return 'Mobile Wallet';
+      default:
+        return 'Cash';
+    }
+  }
+}
+
+extension PaymentsSourceTypesExtension on String {
   PaymentsSourceTypes get toPaymentsSourceTypes {
     switch (this) {
       case 'creditCard':

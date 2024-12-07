@@ -215,3 +215,11 @@ class NoPaymentSourcesLocallyException extends GetPaymentSourcesExceptions {
   const NoPaymentSourcesLocallyException()
       : super(code: 'no-payment-sources-localy-error');
 }
+abstract class AddNewPaymentSourceExceptions extends Exceptions {
+  const AddNewPaymentSourceExceptions({required super.code});
+}
+
+class GeneralAddNewPaymentSourceException extends AddNewPaymentSourceExceptions {
+  const GeneralAddNewPaymentSourceException()
+      : super(code: 'general-add-new-payment-source-error');
+}
