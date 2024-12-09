@@ -14,6 +14,10 @@ class TextStyles {
       fontFamily: fontFamily,
       color: AppColors.light20,
       fontWeight: FontWeight.w500);
+  static const TextStyle w500Light80 = TextStyle(
+      fontFamily: fontFamily,
+      color: AppColors.light80,
+      fontWeight: FontWeight.w500);
   static const TextStyle w600Light80 = TextStyle(
       fontFamily: fontFamily,
       color: AppColors.light80,
@@ -58,13 +62,33 @@ class TextStyles {
       fontFamily: fontFamily,
       color: AppColors.dark,
       fontWeight: FontWeight.w600);
-
-    static const TextStyle w500Dark25 = TextStyle(
+  static const TextStyle w600Dark75 = TextStyle(
+      fontFamily: fontFamily,
+      color: AppColors.dark75,
+      fontWeight: FontWeight.w600);
+  static const TextStyle w500Dark25 = TextStyle(
       fontFamily: fontFamily,
       color: AppColors.dark25,
       fontWeight: FontWeight.w500);
-   static const TextStyle w500Dark50 = TextStyle(
+  static const TextStyle w500Dark50 = TextStyle(
       fontFamily: fontFamily,
       color: AppColors.dark50,
       fontWeight: FontWeight.w500);
+  static const TextStyle w700Yellow100 = TextStyle(
+    fontFamily: fontFamily,
+    color: AppColors.yellow100,
+    fontWeight: FontWeight.w700,
+  );
+  static const TextStyle w600Dark25 = TextStyle(
+      fontFamily: fontFamily,
+      color: AppColors.dark25,
+      fontWeight: FontWeight.w600);
+  static const TextStyle w600Green = TextStyle(
+      fontFamily: fontFamily,
+      color: AppColors.green100,
+      fontWeight: FontWeight.w600);
+  static const TextStyle w600Red = TextStyle(
+      fontFamily: fontFamily,
+      color: AppColors.red100,
+      fontWeight: FontWeight.w600);
 }

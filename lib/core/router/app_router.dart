@@ -27,9 +27,6 @@ class RouterApp {
             builder: (context) => MultiBlocProvider(
                   providers: [
                     BlocProvider(
-                      create: (context) => sl<PaymentSourcesCubit>(),
-                    ),
-                    BlocProvider(
                       create: (context) =>
                           sl<LoginCubit>()..getLoggedInAccount(),
                     ),
@@ -38,17 +35,11 @@ class RouterApp {
                 ));
       case RoutesName.signUpScreenName:
         return MaterialPageRoute(
-          builder: (context) => BlocProvider(
-            create: (context) => sl<PaymentSourcesCubit>(),
-            child: const SignupScreen(),
-          ),
+          builder: (context) => const SignupScreen(),
         );
       case RoutesName.loginScreenName:
         return MaterialPageRoute(
-          builder: (context) => BlocProvider(
-            create: (context) => sl<PaymentSourcesCubit>(),
-            child: const LoginScreen(),
-          ),
+          builder: (context) => const LoginScreen(),
         );
       case RoutesName.verificationScreenName:
         return MaterialPageRoute(

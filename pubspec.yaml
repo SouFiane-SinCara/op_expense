@@ -15,6 +15,7 @@ dependencies:
   equatable: ^2.0.7
   firebase_auth: ^5.3.3
   firebase_core: ^3.8.0
+  fl_chart: ^0.69.2
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.6
@@ -26,6 +27,8 @@ dependencies:
   google_sign_in_ios: ^5.7.8
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+  image_picker: ^1.1.2
+  intl: ^0.20.1
   smooth_page_indicator: ^1.2.0+3
   url_launcher: ^6.3.1
 
@@ -48,7 +51,9 @@ flutter:
     - lib/core/assets/images/forgot_password_sent_screen/
     - lib/core/assets/icons/Magicons/Glyph/Arrow/
     - lib/core/assets/images/setup_wallet/
-     
+    - lib/core/assets/icons/Magicons/Glyph/Finance/
+    - lib/core/assets/icons/Magicons/Glyph/Ecommerce & Shopping/
+    - lib/core/assets/icons/Magicons/Glyph/Travel/
 
   fonts:
     - family: Inter

@@ -17,18 +17,15 @@ class PaymentSourcesCubit extends Cubit<PaymentSourcesState> {
 
   Future<List<PaymentSource>> getPaymentSources(
       {required Account account}) async {
-        
     emit(PaymentSourcesLoading());
     final paymentSourcesEither =
         await mainRepository.getPaymentSources(account: account);
     return paymentSourcesEither.fold(
       (failure) {
-        
         emit(PaymentSourcesError(message: failure.message));
         return [];
       },
       (newPaymentSources) {
-        
         paymentSources = newPaymentSources;
         emit(PaymentSourcesLoaded(paymentSources: newPaymentSources));
         return newPaymentSources;
@@ -50,5 +47,13 @@ class PaymentSourcesCubit extends Cubit<PaymentSourcesState> {
         emit(PaymentSourcesLoaded(paymentSources: paymentSources));
       },
     );
+  }
+
+  double getBalance() {
+    double balance = 0;
+    for (var element in paymentSources) {
+      balance += element.balance;
+    }
+    return balance;
   }
 }
