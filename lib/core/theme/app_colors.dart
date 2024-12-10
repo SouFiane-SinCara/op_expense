@@ -17,6 +17,7 @@ class AppColors {
   static const Color light100 = Color(0xFF757575);
 
   // Violet Colors
+  static const Color violet10 = Color(0xFF8B50FF);
   static const Color violet20 = Color(0xFFEEE5FF);
   static const Color violet40 = Color(0xFFCE93D8);
   static const Color violet60 = Color(0xFFAB47BC);
