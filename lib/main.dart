@@ -1,3 +1,4 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,7 +22,9 @@ Future<void> main() async {
   // open payment sources box
   await Hive.openBox('paymentSources');
   // Run the app
-  runApp(const OpExpenseApp());
+  runApp(DevicePreview(
+    enabled: false,
+    builder: (context) =>  const OpExpenseApp()));
 }
 
 class OpExpenseApp extends StatelessWidget {
@@ -41,7 +44,7 @@ class OpExpenseApp extends StatelessWidget {
         ),
       ],
       child: ScreenUtilInit(
-        designSize: const Size(375, 812),
+        designSize: const Size(410, 850),
         minTextAdapt: true,
         child: MaterialApp(
           onGenerateRoute: RouterApp().onGenerateRoute,

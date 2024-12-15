@@ -9,9 +9,11 @@ class AppDropDownMenu extends StatelessWidget {
   final List<DropdownMenuEntry<Object>> dropdownMenuEntries;
   final Object selectedType;
   final Color trailingIconColor;
+  final String? hintText;
   const AppDropDownMenu(
       {super.key,
       required this.onSelected,
+        this.hintText,
       required this.selectedType,
       required this.dropdownMenuEntries,
       required this.trailingIconColor});
@@ -25,7 +27,7 @@ class AppDropDownMenu extends StatelessWidget {
         'lib/core/assets/icons/Magicons/Glyph/Arrow/arrow-down-2.svg',
         colorFilter: ColorFilter.mode(trailingIconColor, BlendMode.srcIn),
       ),
-      hintText: 'Account type',
+      hintText: hintText ?? 'Select',
       menuStyle: const MenuStyle(
         backgroundColor: WidgetStatePropertyAll(
           AppColors.violet20,

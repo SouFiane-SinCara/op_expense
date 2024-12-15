@@ -16,7 +16,6 @@ class AppNumberFormField extends StatelessWidget {
     return TextFormField(
       // keyboardType of the balance text form field is number without space just numbers and max one dot,
       style: TextStyles.w600Light80.copyWith(fontSize: 64.sp),
-
       controller: controller,
       textInputAction: TextInputAction.done,
       onChanged: (value) {},
@@ -25,7 +24,7 @@ class AppNumberFormField extends StatelessWidget {
       cursorColor: AppColors.light,
 
       inputFormatters: [
-        // Allow only numbers, one dot, negative numbers, up to 13 digits before the dot, and up to 2 digits after the dot.
+        // Allow only numbers, one dot, negative numbers and positive, up to 13 digits before the dot, and up to 2 digits after the dot.
         FilteringTextInputFormatter.allow(
             RegExp(r'^-?[0-9]{1,13}(\.[0-9]{0,2})?$')),
       ],

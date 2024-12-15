@@ -1,4 +1,3 @@
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,6 +5,49 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:op_expense/core/theme/app_colors.dart';
 import 'package:op_expense/features/main/domain/entities/payment_source.dart';
+
+class Transaction extends Equatable {
+  final String id;
+  final String description;
+  final double amount;
+  final TransactionType type;
+  final DateTime date;
+  final PaymentSource paymentSource;
+  final XFile? attachment;
+  final Category category;
+  final bool repeat;
+  final String? frequency;
+  final DateTime? frequencyEndDate;
+
+  const Transaction({
+    required this.id,
+    required this.type,
+    required this.description,
+    required this.amount,
+    required this.date,
+    required this.paymentSource,
+    this.attachment,
+    required this.category,
+    required this.repeat,
+    this.frequency,
+    this.frequencyEndDate,
+  });
+
+  @override
+  List<Object?> get props => [
+        id,
+        description,
+        amount,
+        type,
+        date,
+        paymentSource,
+        attachment,
+        category,
+        repeat,
+        frequency,
+        frequencyEndDate,
+      ];
+}
 
 enum TransactionType { income, expense }
 
@@ -135,47 +177,4 @@ extension CategoryExtension on Category {
         );
     }
   }
-}
-
-class Transaction extends Equatable {
-  final String id;
-  final String description;
-  final double amount;
-  final TransactionType type;
-  final DateTime date;
-  final PaymentSource paymentSource;
-  final XFile? attachment;
-  final Category category;
-  final bool repeat;
-  final String? frequency;
-  final DateTime? frequencyEndDate;
-
-  const Transaction({
-    required this.id,
-    required this.type,
-    required this.description,
-    required this.amount,
-    required this.date,
-    required this.paymentSource,
-    this.attachment,
-    required this.category,
-    required this.repeat,
-    this.frequency,
-    this.frequencyEndDate,
-  });
-
-  @override
-  List<Object?> get props => [
-        id,
-        description,
-        amount,
-        type,
-        date,
-        paymentSource,
-        attachment,
-        category,
-        repeat,
-        frequency,
-        frequencyEndDate,
-      ];
 }

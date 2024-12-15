@@ -40,7 +40,7 @@ class _AddNewAccountScreenState extends State<AddNewAccountScreen> {
     super.initState();
     nameController = TextEditingController();
     balanceController = TextEditingController();
-    scrollController = ScrollController();
+    scrollController = ScrollController(initialScrollOffset: 10000);
   }
 
   @override
@@ -78,194 +78,205 @@ class _AddNewAccountScreenState extends State<AddNewAccountScreen> {
               iconColor: AppColors.light),
           body: SingleChildScrollView(
             controller: scrollController,
-            child: Column(
-              children: [
-                heightSizedBox(300),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: ScreenUtil().screenWidth,
-                      ),
-                      Text(
-                        'Balance',
-                        style: TextStyles.w600Light80.copyWith(
-                          fontSize: 18.sp,
-                          color: AppColors.light80.withOpacity(0.64),
+            child: Container(
+              height: ScreenUtil().screenHeight,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: ScreenUtil().screenWidth,
                         ),
-                      ),
-                      heightSizedBox(13),
-                      AppNumberFormField(
-                        controller: balanceController,
-                        hintText: '\$00.0',
-                      ),
-                      heightSizedBox(8),
-                    ],
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.light,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16.r),
-                      topRight: Radius.circular(16.r),
+                        Text(
+                          'Balance',
+                          style: TextStyles.w600Light80.copyWith(
+                            fontSize: 18.sp,
+                            color: AppColors.light80.withOpacity(0.64),
+                          ),
+                        ),
+                        heightSizedBox(13),
+                        AppNumberFormField(
+                          controller: balanceController,
+                          hintText: '\$00.0',
+                        ),
+                        heightSizedBox(8),
+                      ],
                     ),
                   ),
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-                  child: Column(
-                    children: [
-                      AppTextFormField(
-                          hintText: 'Name', controller: nameController),
-                      heightSizedBox(16),
-                      StatefulBuilder(
-                        builder: (BuildContext context, setDropDownMenuState) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              //!----------- Account type dropdown --------------
-                              AppDropDownMenu(
-                                onSelected: (value) {
-                                  if (chosenPaymentType == null ||
-                                      chosenPaymentType ==
-                                          PaymentsSourceTypes.cash) {
-                                    //scroll to the bottom of the screen
-                                    setState(() {
-                                      scrollController.animateTo(
-                                        1000,
-                                        duration: const Duration(seconds: 1),
-                                        curve: Curves.easeInCubic,
-                                      );
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.light,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(16.r),
+                        topRight: Radius.circular(16.r),
+                      ),
+                    ),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                    child: Column(
+                      children: [
+                        AppTextFormField(
+                            hintText: 'Name', controller: nameController),
+                        heightSizedBox(16),
+                        StatefulBuilder(
+                          builder:
+                              (BuildContext context, setDropDownMenuState) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                //!----------- Account type dropdown --------------
+                                AppDropDownMenu(
+                                  hintText: 'Select account type',
+                                  onSelected: (value) {
+                                    if (chosenPaymentType == null ||
+                                        chosenPaymentType ==
+                                            PaymentsSourceTypes.cash) {
+                                      //scroll to the bottom of the screen
+                                      setState(() {
+                                        scrollController.animateTo(
+                                          1000,
+                                          duration: const Duration(seconds: 1),
+                                          curve: Curves.easeInCubic,
+                                        );
+                                      });
+                                    }
+
+                                    setDropDownMenuState(() {
+                                      chosenPaymentType = value;
                                     });
-                                  }
-
-                                  setDropDownMenuState(() {
-                                    chosenPaymentType = value;
-                                  });
-                                },
-                                selectedType: PaymentsSourceTypes,
-                                dropdownMenuEntries: <DropdownMenuEntry<
-                                    PaymentsSourceTypes>>[
-                                  ...PaymentsSourceTypes.values.map(
-                                    (element) => DropdownMenuEntry(
-                                      value: element,
-                                      label: element.toShortString,
-                                    ),
-                                  ),
-                                ],
-                                trailingIconColor: chosenPaymentType == null
-                                    ? AppColors.light20
-                                    : AppColors.dark,
-                              ),
-                              //!-------------- after selecting account type show providers of that type of payment source ------------
-                              // check if selectedType is not null then show the providers of chosen payment type
-                              if (chosenPaymentType != null &&
-                                  chosenPaymentType!.providersLogos.isNotEmpty)
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    heightSizedBox(16),
-                                    //!--------- chosen payment type  text ------------
-                                    Text(
-                                      chosenPaymentType!.toShortString,
-                                      style: TextStyles.w600Dark.copyWith(
-                                        fontSize: 16.sp,
-                                      ),
-                                    ),
-                                    //!----------- check if the chosen payment type has providers logos then show them like cash don't have providers ------------
-                                    // chosenPaymentType!.providersLogos (.providersLogos) is a extension in PaymentSourceTypes file that returns the providers logos of the chosen payment type
-
-                                    SizedBox(
-                                      width: double.infinity,
-                                      // fixed size of the grid view to make it scrollable
-                                      height: 150.h,
-                                      child: GridView.builder(
-                                        gridDelegate:
-                                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 4,
-                                        ),
-                                        itemCount: chosenPaymentType!
-                                            .providersLogos.length,
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          var providersLogos =
-                                              chosenPaymentType!.providersLogos;
-                                          return GestureDetector(
-                                            onTap: () {
-                                              setDropDownMenuState(() {
-                                                selectedProviderLogo =
-                                                    providersLogos[index];
-                                              });
-                                            },
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          8.r),
-                                                  color: selectedProviderLogo ==
-                                                          providersLogos[index]
-                                                      ? AppColors.violet40
-                                                      : AppColors.light60),
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: 5.w,
-                                                vertical: 2.h,
-                                              ),
-                                              margin: EdgeInsets.symmetric(
-                                                horizontal: 8.w,
-                                                vertical: 18.h,
-                                              ),
-                                              child: Image.asset(
-                                                providersLogos[index],
-                                              ),
-                                            ),
-                                          );
-                                        },
+                                  },
+                                  selectedType: PaymentsSourceTypes,
+                                  dropdownMenuEntries: <DropdownMenuEntry<
+                                      PaymentsSourceTypes>>[
+                                    ...PaymentsSourceTypes.values.map(
+                                      (element) => DropdownMenuEntry(
+                                        value: element,
+                                        label: element.toShortString,
                                       ),
                                     ),
                                   ],
+                                  trailingIconColor: chosenPaymentType == null
+                                      ? AppColors.light20
+                                      : AppColors.dark,
                                 ),
-                            ],
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
+                                //!-------------- after selecting account type show providers of that type of payment source ------------
+                                // check if selectedType is not null then show the providers of chosen payment type
+                                if (chosenPaymentType != null &&
+                                    chosenPaymentType!
+                                        .providersLogos.isNotEmpty)
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      heightSizedBox(16),
+                                      //!--------- chosen payment type  text ------------
+                                      Text(
+                                        chosenPaymentType!.toShortString,
+                                        style: TextStyles.w600Dark.copyWith(
+                                          fontSize: 16.sp,
+                                        ),
+                                      ),
+                                      //!----------- check if the chosen payment type has providers logos then show them like cash don't have providers ------------
+                                      // chosenPaymentType!.providersLogos (.providersLogos) is a extension in PaymentSourceTypes file that returns the providers logos of the chosen payment type
 
-                //!----------- Continue button --------------
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  color: AppColors.light,
-                  child: Column(
-                    children: [
-                      PrimaryButton(
-                          text: 'Continue',
-                          onPressed: () {
-                            // add the account to the database
-                            BlocProvider.of<PaymentSourcesCubit>(context)
-                                .addNewPaymentSource(
-                              account: account,
-                              paymentSource: PaymentSource(
-                                // if the chosen payment type is cash then set the provider logo to the cash logo
-                                providerLogo: chosenPaymentType ==
-                                        PaymentsSourceTypes.cash
-                                    ? 'lib/core/assets/images/setup_wallet/cash.png'
-                                    : selectedProviderLogo,
-                                balance: balanceController.text.isEmpty
-                                    ? 0.0
-                                    : double.parse(balanceController.text),
-                                name: nameController.text.trim(),
-                                type: chosenPaymentType,
-                              ),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        // fixed size of the grid view to make it scrollable
+                                        height: 150.h,
+                                        child: GridView.builder(
+                                          gridDelegate:
+                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 4,
+                                          ),
+                                          itemCount: chosenPaymentType!
+                                              .providersLogos.length,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            var providersLogos =
+                                                chosenPaymentType!
+                                                    .providersLogos;
+                                            return GestureDetector(
+                                              onTap: () {
+                                                setDropDownMenuState(() {
+                                                  selectedProviderLogo =
+                                                      providersLogos[index];
+                                                });
+                                              },
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.r),
+                                                    color:
+                                                        selectedProviderLogo ==
+                                                                providersLogos[
+                                                                    index]
+                                                            ? AppColors.violet40
+                                                            : AppColors
+                                                                .light60),
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 5.w,
+                                                  vertical: 2.h,
+                                                ),
+                                                margin: EdgeInsets.symmetric(
+                                                  horizontal: 8.w,
+                                                  vertical: 18.h,
+                                                ),
+                                                child: Image.asset(
+                                                  providersLogos[index],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                              ],
                             );
-                          }),
-                      heightSizedBox(32),
-                    ],
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+
+                  //!----------- Continue button --------------
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    color: AppColors.light,
+                    child: Column(
+                      children: [
+                        PrimaryButton(
+                            text: 'Continue',
+                            onPressed: () {
+                              // add the account to the database
+                              BlocProvider.of<PaymentSourcesCubit>(context)
+                                  .addNewPaymentSource(
+                                account: account,
+                                paymentSource: PaymentSource(
+                                  // if the chosen payment type is cash then set the provider logo to the cash logo
+                                  providerLogo: chosenPaymentType ==
+                                          PaymentsSourceTypes.cash
+                                      ? 'lib/core/assets/images/setup_wallet/cash.png'
+                                      : selectedProviderLogo,
+                                  balance: balanceController.text.isEmpty
+                                      ? 0.0
+                                      : double.parse(balanceController.text),
+                                  name: nameController.text.trim(),
+                                  type: chosenPaymentType,
+                                ),
+                              );
+                            }),
+                        heightSizedBox(32),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
