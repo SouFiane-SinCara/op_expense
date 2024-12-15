@@ -13,9 +13,10 @@ import 'package:op_expense/features/Authentication/presentation/screens/login_sc
 import 'package:op_expense/core/widgets/onboarding_screen.dart';
 import 'package:op_expense/features/Authentication/presentation/screens/signup_screen.dart';
 import 'package:op_expense/features/Authentication/presentation/screens/verification_screen.dart';
-import 'package:op_expense/features/main/presentation/cubits/payment_sources_cubit/payment_sources_cubit.dart';
+import 'package:op_expense/features/main/domain/entities/transaction.dart';
 import 'package:op_expense/features/main/presentation/screens/add_new_account_screen.dart';
 import 'package:op_expense/features/main/presentation/screens/add_new_account_success_screen.dart';
+import 'package:op_expense/features/main/presentation/screens/add_transaction_screen.dart';
 import 'package:op_expense/features/main/presentation/screens/home_screen.dart';
 import 'package:op_expense/features/main/presentation/screens/setup_wallet_screen.dart';
 
@@ -81,13 +82,16 @@ class RouterApp {
             builder: (context) => const SetupWalletScreen());
       case RoutesName.addNewAccountScreenName:
         return MaterialPageRoute(
-            builder: (context) => BlocProvider(
-                  create: (context) => sl<PaymentSourcesCubit>(),
-                  child: const AddNewAccountScreen(),
-                ));
+            builder: (context) => const AddNewAccountScreen());
       case RoutesName.addNewAccountSuccessScreenName:
         return MaterialPageRoute(
           builder: (context) => const AddNewAccountSuccessScreen(),
+        );
+      case RoutesName.addTransactionScreenName:
+        return MaterialPageRoute(
+          builder: (context) => AddTransactionScreen(
+            transactionType: routeSettings.arguments as TransactionType,
+          ),
         );
       default:
         return MaterialPageRoute(
