@@ -1,7 +1,13 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:op_expense/core/helpers/sized_boxes.dart';
 import 'package:op_expense/core/theme/app_colors.dart';
 import 'package:op_expense/core/theme/text_styles.dart';
@@ -15,6 +21,10 @@ import 'package:op_expense/features/main/domain/entities/payment_source.dart';
 import 'package:op_expense/features/main/domain/entities/transaction.dart';
 import 'package:op_expense/features/main/presentation/cubits/payment_sources_cubit/payment_sources_cubit.dart';
 
+// Enum for transaction frequency
+enum Frequency { yearly, monthly, daily }
+
+// Main screen widget for adding a transaction
 class AddTransactionScreen extends StatefulWidget {
   final TransactionType transactionType;
   const AddTransactionScreen({super.key, required this.transactionType});
@@ -23,21 +33,49 @@ class AddTransactionScreen extends StatefulWidget {
   State<AddTransactionScreen> createState() => _AddTransactionScreenState();
 }
 
+// State class for AddTransactionScreen
 class _AddTransactionScreenState extends State<AddTransactionScreen> {
+  late ImagePicker imagePicker;
+  XFile? imageFile;
   late TextEditingController balanceController;
   Category? chosenCategory;
   late TextEditingController descriptionController;
   PaymentSource? chosenPaymentSource;
   bool repeated = false;
   late ScrollController scrollController;
+  Frequency? chosenFrequency;
+  DateTime? endFrequency;
+  bool errorShowed = false;
+  String? frequencyChosenMonth;
+  String? frequencyChosenDay;
+  // Check if the frequency selection is valid
+  bool isFrequencyValid() {
+    if (chosenFrequency == Frequency.daily && endFrequency != null) {
+      return true;
+    } else if (chosenFrequency == Frequency.monthly &&
+        endFrequency != null &&
+        frequencyChosenDay != null) {
+      return true;
+    } else if (chosenFrequency == Frequency.yearly &&
+        endFrequency != null &&
+        frequencyChosenMonth != null &&
+        frequencyChosenDay != null) {
+      return true;
+    }
+    return false;
+  }
+
+  // Initialize controllers and other state variables
   @override
   void initState() {
     super.initState();
     balanceController = TextEditingController();
     descriptionController = TextEditingController();
     scrollController = ScrollController(initialScrollOffset: 250);
+    imagePicker = ImagePicker();
   }
-  
+
+  // Dispose controllers to free up resources
   @override
   void dispose() {
     balanceController.dispose();
@@ -46,15 +84,28 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     super.dispose();
   }
 
+  // months short names
+  List<String> months = List.generate(12, (index) {
+    DateTime date = DateTime(2024, index + 1, 1); // Month starts from 1
+    return DateFormat.MMM().format(date);
+  });
+  // days list as a list of strings
+  List<String> days = List.generate(31, (index) {
+    return (index + 1).toString();
+  });
+
+  DateTime currentDate = DateTime.now();
+
+  // Main build method for the screen
   @override
   Widget build(BuildContext context) {
-    print(scrollController.toString());
     List<PaymentSource> paymentSources =
         BlocProvider.of<PaymentSourcesCubit>(context).paymentSources;
     //* color depends on the transaction type (income or expense)
     Color color = widget.transactionType == TransactionType.income
         ? AppColors.green100
         : AppColors.red100;
+
     return Scaffold(
       //!------- AppBar-----------
       appBar: myAppBar(
@@ -73,6 +124,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              //!------- Amount Input Section -----------
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: Column(
@@ -97,6 +149,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   ],
                 ),
               ),
+              //!------- Transaction Details Section -----------
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
@@ -112,100 +165,249 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 child: Column(
                   children: [
                     heightSizedBox(16),
+                    //!------- Category Dropdown -----------
                     AppDropDownMenu(
-                        hintText: 'Select Category',
-                        onSelected: (value) {
-                          chosenCategory = value;
-                        },
-                        selectedType: Category,
-                        dropdownMenuEntries: Category.values
-                            .map(
-                              (e) => DropdownMenuEntry(value: e, label: e.name),
-                            )
-                            .toList(),
-                        trailingIconColor: chosenCategory == null
-                            ? AppColors.light20
-                            : AppColors.dark),
+                      hintText: 'Select Category',
+                      onSelected: (value) {
+                        chosenCategory = value;
+                      },
+                      selectedType: Category,
+                      dropdownMenuEntries: Category.values
+                          .map(
+                            (e) => DropdownMenuEntry(value: e, label: e.name),
+                          )
+                          .toList(),
+                    ),
                     heightSizedBox(16),
+                    //!------- Description Input -----------
                     AppTextFormField(
                         hintText: 'Description',
                         controller: descriptionController),
                     heightSizedBox(16),
+                    //!------- Payment Source Dropdown -----------
                     AppDropDownMenu(
-                        hintText: 'Select account',
-                        onSelected: (value) {
-                          chosenPaymentSource = value;
-                        },
-                        selectedType: PaymentSource,
-                        dropdownMenuEntries: paymentSources
-                            .map(
-                              (e) => DropdownMenuEntry(
-                                value: e,
-                                label: e.name,
-                              ),
-                            )
-                            .toList(),
-                        trailingIconColor: chosenPaymentSource == null
-                            ? AppColors.light20
-                            : AppColors.dark),
-                    heightSizedBox(16),
-                    SizedBox(
-                      height: 56.h,
-                      width: double.infinity,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(
-                            'lib/core/assets/icons/Magicons/Glyph/User Interface/attachment.svg',
-                            width: 32.w,
-                            height: 32.h,
-                            colorFilter: const ColorFilter.mode(
-                              AppColors.light20,
-                              BlendMode.srcIn,
+                      hintText: 'Select account',
+                      onSelected: (value) {
+                        chosenPaymentSource = value;
+                      },
+                      selectedType: PaymentSource,
+                      dropdownMenuEntries: paymentSources
+                          .map(
+                            (e) => DropdownMenuEntry(
+                              value: e,
+                              label: e.name,
                             ),
-                          ),
-                          widthSizedBox(10),
-                          Text(
-                            'Add attachment',
-                            style: TextStyles.w500Light20
-                                .copyWith(fontSize: 16.sp),
-                          ),
-                        ],
-                      ),
+                          )
+                          .toList(),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Repeat",
-                              style: TextStyles.w500Dark25.copyWith(
-                                fontSize: 16.sp,
-                              ),
-                            ),
-                            Text('Repeat transaction',
-                                style: TextStyles.w500Light20.copyWith(
-                                  fontSize: 16.sp,
-                                )),
-                          ],
-                        ),
-                        StatefulBuilder(
-                          builder: (BuildContext context, setState) {
-                            return AppSwitch(
-                              value: repeated,
-                              onChanged: (value) {
-                                setState(() {
-                                  repeated = value;
-                                });
-                              },
-                            );
+                    heightSizedBox(16),
+                    //!------- Attachment Section -----------
+                    StatefulBuilder(
+                      builder: (BuildContext context, setAttachmentState) {
+                        return GestureDetector(
+                          onTap: () {
+                            displayAttachmentSourceOptions(
+                                context, setAttachmentState);
                           },
-                        ),
-                      ],
+                          child: imageFile != null
+                              ? Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Container(
+                                    margin:
+                                        EdgeInsets.symmetric(vertical: 16.h),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Image.file(
+                                          File(imageFile!.path),
+                                          fit: BoxFit.fill,
+                                          width: 110.w,
+                                          height: 110.h,
+                                        ),
+                                        Positioned(
+                                          top: 0,
+                                          right: 0,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              imageFile = null;
+                                              setAttachmentState(() {});
+                                            },
+                                            child: Container(
+                                              width: 24.w,
+                                              height: 24.h,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: AppColors.light20
+                                                    .withOpacity(0.8),
+                                              ),
+                                              //lib\core\assets\icons\Magicons\Glyph\User Interface\close.svg
+                                              child: SvgPicture.asset(
+                                                'lib/core/assets/icons/Magicons/Glyph/User Interface/close.svg',
+                                                width: 16.w,
+                                                height: 16.h,
+                                                colorFilter:
+                                                    const ColorFilter.mode(
+                                                        AppColors.light,
+                                                        BlendMode.srcIn),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(
+                                      'lib/core/assets/icons/Magicons/Glyph/User Interface/attachment.svg',
+                                      width: 32.w,
+                                      height: 32.h,
+                                      colorFilter: const ColorFilter.mode(
+                                        AppColors.light20,
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
+                                    widthSizedBox(10),
+                                    Text(
+                                      'Add attachment',
+                                      style: TextStyles.w500Light20
+                                          .copyWith(fontSize: 16.sp),
+                                    ),
+                                  ],
+                                ),
+                        );
+                      },
+                    ),
+                    //!------- Repeat Transaction Section -----------
+                    StatefulBuilder(
+                      builder: (BuildContext context, updateState) {
+                        return Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Repeat",
+                                      style: TextStyles.w500Dark25.copyWith(
+                                        fontSize: 16.sp,
+                                      ),
+                                    ),
+                                    Text('Repeat transaction',
+                                        style: TextStyles.w500Light20.copyWith(
+                                          fontSize: 16.sp,
+                                        )),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    AppSwitch(
+                                      value: repeated,
+                                      onChanged: (value) async {
+                                        chosenFrequency = null;
+                                        endFrequency = null;
+                                        errorShowed = false;
+                                        if (repeated == true) {
+                                          updateState(() {
+                                            repeated = false;
+                                          });
+                                          return;
+                                        }
+                                        displayFrequencyOptions(
+                                            context, updateState);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            //!----------- frequency information if repeated -----------
+                            if (repeated)
+                              Container(
+                                margin: EdgeInsets.only(top: 8.h),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Frequency',
+                                          style: TextStyles.w500Dark25.copyWith(
+                                            fontSize: 16.sp,
+                                          ),
+                                        ),
+                                        Text(
+                                          '${chosenFrequency!.name} - ${frequencyChosenMonth ?? ''} ${frequencyChosenDay ?? ''}',
+                                          style:
+                                              TextStyles.w500Light20.copyWith(
+                                            fontSize: 16.sp,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'End After',
+                                          style: TextStyles.w500Dark25.copyWith(
+                                            fontSize: 16.sp,
+                                          ),
+                                        ),
+                                        //show end date like 12 Jan 2024
+                                        Text(
+                                          DateFormat('dd MMM yyyy')
+                                              .format(endFrequency!),
+                                          style:
+                                              TextStyles.w500Light20.copyWith(
+                                            fontSize: 16.sp,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        displayFrequencyOptions(
+                                            context, updateState);
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: AppColors.violet20,
+                                          borderRadius:
+                                              BorderRadius.circular(16.r),
+                                        ),
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 16.w,
+                                          vertical: 7.h,
+                                        ),
+                                        child: Text(
+                                          'Edit',
+                                          style:
+                                              TextStyles.w500Violet100.copyWith(
+                                            fontSize: 14.sp,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                          ],
+                        );
+                      },
                     ),
                     heightSizedBox(40),
+                    //!------- Continue Button -----------
                     PrimaryButton(text: 'continue', onPressed: () {}),
                     heightSizedBox(16),
                   ],
@@ -213,6 +415,274 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  //!----------------- Display frequency options -------------------
+  Future<dynamic> displayFrequencyOptions(
+      BuildContext context, StateSetter updateState) {
+    errorShowed = false;
+    return showDialog(
+      context: context,
+      builder: (context) => SizedBox(
+        height: double.infinity,
+        width: double.infinity,
+        child: Stack(
+          children: [
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: AppColors.light,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16.r),
+                    topRight: Radius.circular(16.r),
+                  ),
+                ),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16.w,
+                  vertical: 16.h,
+                ),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      child: Material(
+                        child: StatefulBuilder(
+                          builder: (BuildContext context, setFrequencyState) {
+                            return Column(
+                              children: [
+                                if (errorShowed)
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 16.h,
+                                    ),
+                                    child:
+                                        Text('Complete frequency information',
+                                            style: TextStyles.w600Red.copyWith(
+                                              fontSize: 16.sp,
+                                            )),
+                                  ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: AppDropDownMenu(
+                                        onSelected: (value) {
+                                          setFrequencyState(() {
+                                            chosenFrequency = value;
+                                          });
+                                        },
+                                        hintText: 'Frequency',
+                                        selectedType: String,
+                                        dropdownMenuEntries: Frequency.values
+                                            .map(
+                                              (e) => DropdownMenuEntry(
+                                                value: e,
+                                                label: e.name,
+                                              ),
+                                            )
+                                            .toList(),
+                                      ),
+                                    ),
+                                    chosenFrequency != null &&
+                                            chosenFrequency != Frequency.daily
+                                        ? Expanded(
+                                            flex: chosenFrequency !=
+                                                    Frequency.monthly
+                                                ? 2
+                                                : 1,
+                                            child: Row(
+                                              children: [
+                                                if (chosenFrequency !=
+                                                    Frequency.monthly)
+                                                  Expanded(
+                                                    child: AppDropDownMenu(
+                                                      onSelected: (value) {
+                                                        frequencyChosenMonth =
+                                                            value;
+                                                      },
+                                                      selectedType: String,
+                                                      dropdownMenuEntries:
+                                                          months
+                                                              .map(
+                                                                (e) =>
+                                                                    DropdownMenuEntry(
+                                                                        value:
+                                                                            e,
+                                                                        label:
+                                                                            e),
+                                                              )
+                                                              .toList(),
+                                                      hintText: 'month',
+                                                    ),
+                                                  ),
+                                                Expanded(
+                                                  child: AppDropDownMenu(
+                                                    onSelected: (value) {
+                                                      frequencyChosenDay =
+                                                          value;
+                                                    },
+                                                    hintText: 'day',
+                                                    selectedType: String,
+                                                    dropdownMenuEntries: days
+                                                        .map(
+                                                          (e) =>
+                                                              DropdownMenuEntry(
+                                                                  value: e,
+                                                                  label: e),
+                                                        )
+                                                        .toList(),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        : const Expanded(
+                                            flex: 0,
+                                            child: SizedBox(),
+                                          ),
+                                  ],
+                                ),
+                                heightSizedBox(16),
+                                GestureDetector(
+                                  onTap: () {
+                                    showDatePicker(
+                                      context: context,
+                                      initialDate: currentDate,
+                                      firstDate: currentDate,
+                                      lastDate: DateTime(
+                                        2050,
+                                      ),
+                                    ).then((value) {
+                                      if (value != null) {
+                                        setFrequencyState(() {
+                                          endFrequency = value;
+                                        });
+                                      }
+                                    });
+                                  },
+                                  child: Container(
+                                    height: 56.h,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16.w,
+                                      vertical: 16.h,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          endFrequency == null
+                                              ? 'End After'
+                                              : DateFormat.yMMMd()
+                                                  .format(endFrequency!),
+                                          style: endFrequency == null
+                                              ? TextStyles.w500Light20.copyWith(
+                                                  fontSize: 16.sp,
+                                                )
+                                              : TextStyles.w500Dark25.copyWith(
+                                                  fontSize: 16.sp,
+                                                ),
+                                        ),
+                                        Icon(
+                                          Icons.calendar_month,
+                                          color: endFrequency == null
+                                              ? AppColors.light20
+                                              : AppColors.dark,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                heightSizedBox(24),
+                                PrimaryButton(
+                                    text: 'next',
+                                    onPressed: () {
+                                      if (isFrequencyValid()) {
+                                        Navigator.pop(context);
+                                        updateState(() {
+                                          repeated = true;
+                                        });
+                                      } else {
+                                        setFrequencyState(() {
+                                          errorShowed = true;
+                                        });
+                                      }
+                                    }),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+//!----------------- Display attachment source options -------------------
+  Future<dynamic> displayAttachmentSourceOptions(
+      BuildContext context, StateSetter setAttachmentState) {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            GestureDetector(
+              onTap: () async {
+                XFile? oldImageFile = imageFile;
+                imageFile =
+                    await imagePicker.pickImage(source: ImageSource.gallery);
+
+                if (imageFile != oldImageFile) {
+                  Navigator.of(context).pop();
+                  setAttachmentState(() {});
+                }
+              },
+              child: SvgPicture.asset(
+                'lib/core/assets/icons/Magicons/Glyph/Communication/gallery.svg',
+                width: 32.w,
+                height: 32.h,
+                colorFilter: const ColorFilter.mode(
+                  AppColors.light20,
+                  BlendMode.srcIn,
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () async {
+                XFile? oldImageFile = imageFile;
+                imageFile =
+                    await imagePicker.pickImage(source: ImageSource.camera);
+
+                if (imageFile != oldImageFile) {
+                  Navigator.of(context).pop();
+                  setAttachmentState(() {});
+                }
+              },
+              child: SvgPicture.asset(
+                'lib/core/assets/icons/Magicons/Glyph/User Interface/camera.svg',
+                width: 32.w,
+                height: 32.h,
+                colorFilter: const ColorFilter.mode(
+                  AppColors.light20,
+                  BlendMode.srcIn,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -368,7 +368,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       fontSize: 14.sp,
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),

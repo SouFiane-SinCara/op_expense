@@ -159,9 +159,7 @@ class _AddNewAccountScreenState extends State<AddNewAccountScreen> {
                                       ),
                                     ),
                                   ],
-                                  trailingIconColor: chosenPaymentType == null
-                                      ? AppColors.light20
-                                      : AppColors.dark,
+                                 
                                 ),
                                 //!-------------- after selecting account type show providers of that type of payment source ------------
                                 // check if selectedType is not null then show the providers of chosen payment type
