@@ -105,10 +105,15 @@ class AuthRepositoryImpl extends AuthRepository {
   @override
   Future<Either<Failures, Account>> getLoggedInAccount() async {
     try {
-      Account account = await authLocalDataSource.getAccount();
+      AccountModel account = await authLocalDataSource.getAccount();
+      await authRemoteDataSource.updateLastLogin(account: account);
       return right(account);
     } on NoAccountLoggedException {
       return left(const NoAccountLoggedFailure());
+    } on NoInternetException {
+      return left(const NoInternetFailure());
+    } on GeneralFireStoreException {
+      return left(const GeneralFireStoreFailure());
     } catch (e) {
       return left(const HiveStorageFailure());
     }

@@ -8,8 +8,13 @@ class AppNumberFormField extends StatelessWidget {
   final TextEditingController controller;
   final String? hintText;
   final String? prefixText;
+  final bool allowNegative;
   const AppNumberFormField(
-      {super.key, required this.controller, this.hintText, this.prefixText});
+      {super.key,
+      required this.controller,
+      this.hintText,
+      this.prefixText,
+      this.allowNegative = false});
 
   @override
   Widget build(BuildContext context) {
@@ -19,19 +24,28 @@ class AppNumberFormField extends StatelessWidget {
       controller: controller,
       textInputAction: TextInputAction.done,
       onChanged: (value) {},
+
       keyboardType:
           const TextInputType.numberWithOptions(decimal: true, signed: true),
       cursorColor: AppColors.light,
 
       inputFormatters: [
-        // Allow only numbers, one dot, negative numbers and positive, up to 13 digits before the dot, and up to 2 digits after the dot.
-        FilteringTextInputFormatter.allow(
-            RegExp(r'^-?[0-9]{1,13}(\.[0-9]{0,2})?$')),
+        // Allow only numbers, one dot, negative numbers (allow adding - at start ) and positive, up to 13 digits before the dot, and up to 2 digits after the dot.
+        allowNegative
+            ? FilteringTextInputFormatter.allow(
+                RegExp(r'^-?\d{0,13}(\.\d{0,2})?$'))
+            : FilteringTextInputFormatter.allow(
+                RegExp(r'^\d{0,13}(\.\d{0,2})?$'))
       ],
 
       decoration: InputDecoration(
         isDense: true,
-        prefixText: prefixText,
+        prefixIcon: prefixText != null
+            ? Text(
+                prefixText!,
+                style: TextStyles.w600Light80.copyWith(fontSize: 64.sp),
+              )
+            : null,
         hintText: hintText,
         hintStyle: TextStyles.w600Light80.copyWith(fontSize: 64.sp),
         prefixStyle: TextStyles.w600Light80.copyWith(fontSize: 64.sp),

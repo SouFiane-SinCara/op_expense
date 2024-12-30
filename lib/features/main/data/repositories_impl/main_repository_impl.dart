@@ -6,6 +6,7 @@ import 'package:op_expense/features/main/data/data_sources/main_local_data_sourc
 import 'package:op_expense/features/main/data/data_sources/main_remote_data_source.dart';
 import 'package:op_expense/features/main/data/models/payment_source_model.dart';
 import 'package:op_expense/features/main/domain/entities/payment_source.dart';
+import 'package:op_expense/features/main/domain/entities/transaction.dart';
 import 'package:op_expense/features/main/domain/repositories/main_repository.dart';
 
 class MainRepositoryImpl extends MainRepository {
@@ -21,7 +22,7 @@ class MainRepositoryImpl extends MainRepository {
     try {
       List<PaymentSourceModel> paymentSources =
           await mainLocalDataSource.getPaymentSources();
-          
+
       return right(paymentSources);
     } catch (e) {
       // after failing to get payment sources from local data source try to get it from remote data source
@@ -60,6 +61,22 @@ class MainRepositoryImpl extends MainRepository {
       throw const NoInternetFailure();
     } catch (e) {
       throw const GeneralAddNewPaymentSourceException();
+    }
+  }
+
+  @override
+  Future<Either<Failures, Unit>> addTransaction(
+      {required Account account, required Transaction transaction}) async {
+    try {
+      await mainRemoteDataSource.addTransaction(
+          account: account, transaction: transaction);
+      return right(unit);
+    } on NoInternetException {
+      return left(const NoInternetFailure());
+    } on FirebaseStorageException {
+      return left(const FirebaseStorageFailure());
+    } catch (e) {
+      return left(const GeneralAddTransactionFailure());
     }
   }
 }

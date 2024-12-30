@@ -32,6 +32,9 @@ abstract class AuthRemoteDataSource {
 
   // Method to reset password
   Future<void> sendResetPassword(String email);
+
+  // method to update last login time
+  Future<void> updateLastLogin({required AccountModel account});
 }
 
 // Implementation of AuthRemoteDataSource using Firebase
@@ -70,6 +73,7 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
 
       // Create a user in Firebase Firestore
       AccountModel accountModel = AccountModel(
+        lastLogin: DateTime.now().millisecondsSinceEpoch,
         name: name,
         email: email,
         password: password,
@@ -128,6 +132,7 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
 
       AccountModel account = AccountModel(
           name: googleUser.displayName!,
+          lastLogin: DateTime.now().millisecondsSinceEpoch,
           email: googleUser.email,
           password: "googleUser",
           isVerified: true,
@@ -158,11 +163,20 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
       await checkConnection();
       UserCredential userCredential = await firebaseAuth
           .signInWithEmailAndPassword(email: email, password: password);
+      firebaseFirestore
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .update(
+        {
+          "lastLogin": DateTime.now().millisecondsSinceEpoch,
+        },
+      );
+
       final map = await firebaseFirestore
           .collection("users")
           .doc(userCredential.user!.uid)
           .get();
-
+      print('email ${map.data()!["email"]}');
       AccountModel accountModel = AccountModel.fromJson(map.data()!);
 
       return accountModel;
@@ -272,6 +286,22 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
       throw const NoInternetException();
     } catch (e) {
       throw const GeneralResetPasswordException();
+    }
+  }
+
+  @override
+  Future<void> updateLastLogin({required AccountModel account}) async {
+    try {
+      await checkConnection();
+      await firebaseFirestore.collection('users').doc(account.userId).update(
+        {
+          "lastLogin": DateTime.now().millisecondsSinceEpoch,
+        },
+      );
+    } on NoInternetException {
+      throw const NoInternetException();
+    } catch (e) {
+      throw const GeneralFireStoreException();
     }
   }
 }

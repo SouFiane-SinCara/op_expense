@@ -3,7 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:op_expense/core/theme/app_colors.dart';
 
 class AppLoading extends StatelessWidget {
-  const AppLoading({super.key});
+  final Color? backgroundColor;
+  final Color? circularProgressColor;
+  const AppLoading(
+      {super.key, this.backgroundColor, this.circularProgressColor});
 
   @override
   Widget build(BuildContext context) {
@@ -11,9 +14,9 @@ class AppLoading extends StatelessWidget {
       alignment: Alignment.center,
       width: ScreenUtil().screenWidth,
       height: ScreenUtil().screenHeight,
-      color: AppColors.light,
-      child: const CircularProgressIndicator(
-        color: AppColors.dark,
+      color: backgroundColor ?? AppColors.light,
+      child: CircularProgressIndicator(
+        color: circularProgressColor ?? AppColors.dark,
       ),
     );
   }

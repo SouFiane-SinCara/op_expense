@@ -39,7 +39,7 @@ class LoginCubit extends Cubit<LoginState> {
     emit(LoginLoadingState());
     await authRepository.getLoggedInAccount().then((result) {
       result.fold((fail) {
-        emit(LoginInitial());
+        emit(LoginFailureState(message: fail.message));
       }, (account) {
         authenticationCubit.authenticate(account);
         emit(

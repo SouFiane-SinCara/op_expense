@@ -286,3 +286,37 @@ class EmptyNameAddNewPaymentSourceFailure extends AddNewPaymentSourceFailures {
             message:
                 'The name field is required. Please fill out the name field and try again.');
 }
+
+abstract class AddTransactionFailures extends Failures {
+  const AddTransactionFailures({required super.message});
+}
+
+class CategoryUnselectedFailure extends AddTransactionFailures {
+  const CategoryUnselectedFailure()
+      : super(message: 'Please select a category before proceeding.');
+}
+
+class PaymentSourceUnselectedFailure extends AddTransactionFailures {
+  const PaymentSourceUnselectedFailure()
+      : super(message: 'Please select a payment source before proceeding.');
+}
+
+class ZeroAmountFailure extends AddTransactionFailures {
+  const ZeroAmountFailure()
+      : super(
+            message: 'The amount cannot be zero. Please enter a valid amount.');
+}
+
+class GeneralAddTransactionFailure extends AddTransactionFailures {
+  const GeneralAddTransactionFailure()
+      : super(
+            message:
+                'An unknown error occurred while trying to add a new transaction.');
+}
+
+class FirebaseStorageFailure extends Failures {
+  const FirebaseStorageFailure()
+      : super(
+            message:
+                'An error occurred while trying to upload the attachment.');
+}
