@@ -44,7 +44,7 @@ class TransactionCard extends StatelessWidget {
                     : TextStyles.w600Green.copyWith(fontSize: 16.sp),
               ),
               Text(
-                DateFormat('HH:mm').format(transaction.date),
+                DateFormat('HH:mm').format(transaction.createAt),
                 style: TextStyles.w500Light20.copyWith(fontSize: 13.sp),
               ),
             ],

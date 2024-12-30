@@ -8,8 +8,7 @@ import 'package:op_expense/core/helpers/sized_boxes.dart';
 import 'package:op_expense/core/router/routes_name.dart';
 import 'package:op_expense/core/theme/app_colors.dart';
 import 'package:op_expense/core/theme/text_styles.dart';
-import 'package:op_expense/features/main/domain/entities/payment_source.dart';
-import 'package:op_expense/features/main/domain/entities/payments_source_types.dart';
+import 'package:op_expense/features/Authentication/presentation/cubits/sign_out_cubit/sign_out_cubit.dart';
 import 'package:op_expense/features/main/presentation/cubits/payment_sources_cubit/payment_sources_cubit.dart';
 import 'package:op_expense/features/main/domain/entities/transaction.dart';
 import 'package:op_expense/features/main/presentation/widgets/transaction_card.dart';
@@ -35,228 +34,20 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     // Sample transactions for testing
-    final DateTime staticNow = DateTime(2024, 9, 12, 9, 30);
-    final List<Transaction> transactions = [
-      Transaction(
-        id: '1',
-        description: 'Grocery',
-        amount: -33.0,
-        type: TransactionType.expense,
-        date: staticNow.subtract(const Duration(hours: 23)),
-        paymentSource: const PaymentSource(
-          providerLogo: 'lib/core/assets/images/setup_wallet/visa.png',
-          balance: 23.0,
-          name: 'Credit Card',
-          type: PaymentsSourceTypes.creditCard,
-        ),
-        category: Category.food,
-        repeat: false,
-      ),
-      Transaction(
-        id: '1',
-        description: 'Grocery',
-        amount: -1.0,
-        type: TransactionType.expense,
-        date: staticNow.subtract(const Duration(hours: 23)),
-        paymentSource: const PaymentSource(
-          providerLogo: 'lib/core/assets/images/setup_wallet/visa.png',
-          balance: -19.0,
-          name: 'Credit Card',
-          type: PaymentsSourceTypes.creditCard,
-        ),
-        category: Category.food,
-        repeat: false,
-      ),
-      Transaction(
-        id: '1',
-        description: 'Grocery',
-        amount: -50.0,
-        type: TransactionType.expense,
-        date: staticNow.subtract(const Duration(hours: 23)),
-        paymentSource: const PaymentSource(
-          providerLogo: 'lib/core/assets/images/setup_wallet/visa.png',
-          balance: 1000.0,
-          name: 'Credit Card',
-          type: PaymentsSourceTypes.creditCard,
-        ),
-        category: Category.food,
-        repeat: false,
-      ),
-      Transaction(
-        id: '1',
-        description: 'Grocery',
-        amount: -50.0,
-        type: TransactionType.expense,
-        date: staticNow.subtract(const Duration(hours: 23)),
-        paymentSource: const PaymentSource(
-          providerLogo: 'lib/core/assets/images/setup_wallet/visa.png',
-          balance: -50.0,
-          name: 'Credit Card',
-          type: PaymentsSourceTypes.creditCard,
-        ),
-        category: Category.food,
-        repeat: false,
-      ),
-      Transaction(
-        id: '1',
-        description: 'Grocery',
-        amount: -50.0,
-        type: TransactionType.expense,
-        date: staticNow.subtract(const Duration(hours: 23)),
-        paymentSource: const PaymentSource(
-          providerLogo: 'lib/core/assets/images/setup_wallet/visa.png',
-          balance: 1000.0,
-          name: 'Credit Card',
-          type: PaymentsSourceTypes.creditCard,
-        ),
-        category: Category.food,
-        repeat: false,
-      ),
-      Transaction(
-        id: '2',
-        description: 'Rent',
-        amount: -1200.0,
-        type: TransactionType.expense,
-        date: staticNow.subtract(const Duration(days: 5)),
-        paymentSource: const PaymentSource(
-          providerLogo: 'lib/core/assets/images/setup_wallet/chase-bank.png',
-          balance: 5000.0,
-          name: 'Bank Transfer',
-          type: PaymentsSourceTypes.bank,
-        ),
-        category: Category.others,
-        repeat: false,
-      ),
-      Transaction(
-        id: '3',
-        description: 'Salary',
-        amount: 5000.0,
-        type: TransactionType.income,
-        date: staticNow.subtract(const Duration(days: 6)),
-        paymentSource: const PaymentSource(
-          providerLogo: 'lib/core/assets/images/setup_wallet/chase-bank.png',
-          balance: 10000.0,
-          name: 'Bank Transfer',
-          type: PaymentsSourceTypes.bank,
-        ),
-        category: Category.salary,
-        repeat: false,
-      ),
-      Transaction(
-        id: '4',
-        description: 'Electricity Bill',
-        amount: -100.0,
-        type: TransactionType.expense,
-        date: staticNow.subtract(const Duration(days: 7)),
-        paymentSource: const PaymentSource(
-          providerLogo: 'lib/core/assets/images/setup_wallet/visa.png',
-          balance: 800.0,
-          name: 'Credit Card',
-          type: PaymentsSourceTypes.creditCard,
-        ),
-        category: Category.subscription,
-        repeat: false,
-      ),
-      Transaction(
-        id: '5',
-        description: 'Internet Bill',
-        amount: -60.0,
-        type: TransactionType.expense,
-        date: staticNow.subtract(const Duration(days: 90)),
-        paymentSource: const PaymentSource(
-          providerLogo: 'lib/core/assets/images/setup_wallet/visa.png',
-          balance: 700.0,
-          name: 'Credit Card',
-          type: PaymentsSourceTypes.creditCard,
-        ),
-        category: Category.subscription,
-        repeat: false,
-      ),
-      Transaction(
-        id: '6',
-        description: 'Dining Out',
-        amount: -75.0,
-        type: TransactionType.expense,
-        date: staticNow.subtract(const Duration(days: 15)),
-        paymentSource: const PaymentSource(
-          providerLogo: 'lib/core/assets/images/setup_wallet/visa.png',
-          balance: 600.0,
-          name: 'Debit Card',
-          type: PaymentsSourceTypes.creditCard,
-        ),
-        category: Category.food,
-        repeat: false,
-      ),
-      Transaction(
-        id: '7',
-        description: 'Gym Membership',
-        amount: -45.0,
-        type: TransactionType.expense,
-        date: staticNow.subtract(const Duration(days: 60)),
-        paymentSource: const PaymentSource(
-          providerLogo: 'lib/core/assets/images/setup_wallet/visa.png',
-          balance: 500.0,
-          name: 'Credit Card',
-          type: PaymentsSourceTypes.creditCard,
-        ),
-        category: Category.subscription,
-        repeat: false,
-      ),
-      Transaction(
-        id: '8',
-        description: 'Car Maintenance',
-        amount: -300.0,
-        type: TransactionType.expense,
-        date: staticNow.subtract(const Duration(days: 120)),
-        paymentSource: const PaymentSource(
-          providerLogo: 'lib/core/assets/images/setup_wallet/chase-bank.png',
-          balance: 4000.0,
-          name: 'Bank Transfer',
-          type: PaymentsSourceTypes.bank,
-        ),
-        category: Category.transport,
-        repeat: false,
-      ),
-      Transaction(
-        id: '9',
-        description: 'Vacation',
-        amount: -2000.0,
-        type: TransactionType.expense,
-        date: staticNow.subtract(const Duration(days: 180)),
-        paymentSource: const PaymentSource(
-          providerLogo: 'lib/core/assets/images/setup_wallet/visa.png',
-          balance: 3000.0,
-          name: 'Credit Card',
-          type: PaymentsSourceTypes.creditCard,
-        ),
-        category: Category.others,
-        repeat: false,
-      ),
-      Transaction(
-        id: '10',
-        description: 'Books',
-        amount: -100.0,
-        type: TransactionType.expense,
-        date: staticNow.subtract(const Duration(days: 45)),
-        paymentSource: const PaymentSource(
-          providerLogo: 'lib/core/assets/images/setup_wallet/visa.png',
-          balance: 200.0,
-          name: 'Debit Card',
-          type: PaymentsSourceTypes.creditCard,
-        ),
-        category: Category.others,
-        repeat: false,
-      ),
-    ];
-
+    final DateTime currentTime = DateTime.now();
+    final List<Transaction> transactions = [];
     return SafeArea(
       child: Scaffold(
-          backgroundColor: AppColors.light,
-          bottomNavigationBar: showBottomBar(),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
-          floatingActionButton: showFloatingPlusButton(),
-          body: showBody(transactions, staticNow)),
+        backgroundColor: AppColors.light,
+        bottomNavigationBar: showBottomBar(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: showFloatingPlusButton(),
+        resizeToAvoidBottomInset: true,
+        body: showBody(
+          transactions,
+          currentTime,
+        ),
+      ),
     );
   }
 
@@ -309,13 +100,18 @@ class _HomeScreenState extends State<HomeScreen> {
               label: 'Budget',
             ),
             BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'lib/core/assets/icons/Magicons/Glyph/Ecommerce & Shopping/user.svg',
-                colorFilter: ColorFilter.mode(
-                  navigationIndex != 3
-                      ? AppColors.light20
-                      : AppColors.violet100,
-                  BlendMode.srcIn,
+              icon: GestureDetector(
+                onLongPress: () async {
+                  await BlocProvider.of<SignOutCubit>(context).signOut();
+                },
+                child: SvgPicture.asset(
+                  'lib/core/assets/icons/Magicons/Glyph/Ecommerce & Shopping/user.svg',
+                  colorFilter: ColorFilter.mode(
+                    navigationIndex != 3
+                        ? AppColors.light20
+                        : AppColors.violet100,
+                    BlendMode.srcIn,
+                  ),
                 ),
               ),
               label: 'Profile',
@@ -459,7 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Duration(
               days: selectedDuration.durationToNumber(),
             ),
-          )).isBefore(e.date)) {
+          )).isBefore(e.createAt)) {
             spots.add(
               FlSpot(spots.length.toDouble(), e.amount),
             );

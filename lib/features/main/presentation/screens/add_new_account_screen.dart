@@ -78,7 +78,7 @@ class _AddNewAccountScreenState extends State<AddNewAccountScreen> {
               iconColor: AppColors.light),
           body: SingleChildScrollView(
             controller: scrollController,
-            child: Container(
+            child: SizedBox(
               height: ScreenUtil().screenHeight,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -95,13 +95,15 @@ class _AddNewAccountScreenState extends State<AddNewAccountScreen> {
                           'Balance',
                           style: TextStyles.w600Light80.copyWith(
                             fontSize: 18.sp,
-                            color: AppColors.light80.withOpacity(0.64),
+                            color: AppColors.light80.withAlpha(164),
                           ),
                         ),
                         heightSizedBox(13),
                         AppNumberFormField(
                           controller: balanceController,
-                          hintText: '\$00.0',
+                          hintText: '00.0',
+                          prefixText: '\$',
+                          allowNegative: true,
                         ),
                         heightSizedBox(8),
                       ],
@@ -159,7 +161,6 @@ class _AddNewAccountScreenState extends State<AddNewAccountScreen> {
                                       ),
                                     ),
                                   ],
-                                 
                                 ),
                                 //!-------------- after selecting account type show providers of that type of payment source ------------
                                 // check if selectedType is not null then show the providers of chosen payment type

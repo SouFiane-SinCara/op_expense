@@ -6,54 +6,74 @@ import 'package:image_picker/image_picker.dart';
 import 'package:op_expense/core/theme/app_colors.dart';
 import 'package:op_expense/features/main/domain/entities/payment_source.dart';
 
+// Entity for transaction attachment
+class Attachment extends Equatable {
+  XFile? file;
+  String? url;
+  Attachment({this.file, this.url});
+
+  @override
+  List<Object?> get props => [file, url];
+}
+
+// ignore: must_be_immutable
 class Transaction extends Equatable {
-  final String id;
   final String description;
   final double amount;
   final TransactionType type;
-  final DateTime date;
-  final PaymentSource paymentSource;
-  final XFile? attachment;
-  final Category category;
+  final DateTime createAt;
+  final PaymentSource? paymentSource;
+  final Attachment? attachment;
+  final Category? category;
   final bool repeat;
-  final String? frequency;
+  final int? frequencyDay;
+  final int? frequencyMonth;
   final DateTime? frequencyEndDate;
+  final Frequency? frequency;
 
   const Transaction({
-    required this.id,
     required this.type,
     required this.description,
     required this.amount,
-    required this.date,
+    required this.frequencyDay,
+    required this.frequencyMonth,
+    required this.createAt,
     required this.paymentSource,
-    this.attachment,
+    required this.attachment,
+    required this.frequency,
     required this.category,
     required this.repeat,
-    this.frequency,
-    this.frequencyEndDate,
+    required this.frequencyEndDate,
   });
 
   @override
   List<Object?> get props => [
-        id,
         description,
         amount,
         type,
-        date,
+        createAt,
         paymentSource,
         attachment,
         category,
         repeat,
         frequency,
         frequencyEndDate,
+        frequencyDay,
+        frequencyMonth,
       ];
 }
 
+// Enum for transaction type
 enum TransactionType { income, expense }
 
+// Enum for transaction category
 enum Category { food, transport, shopping, subscription, salary, others }
 
-extension CategoryExtension on Category {
+// Enum for transaction frequency
+enum Frequency { yearly, monthly, daily }
+
+// Extension for transaction type help me to get the name of the Category and the icon of the Category
+extension CategoryExtension on Category? {
   String get name {
     switch (this) {
       case Category.food:
@@ -67,6 +87,8 @@ extension CategoryExtension on Category {
       case Category.salary:
         return 'Salary';
       case Category.others:
+        return 'Others';
+      default:
         return 'Others';
     }
   }
@@ -159,6 +181,23 @@ extension CategoryExtension on Category {
           ),
         );
       case Category.others:
+        return Container(
+          width: 60.w,
+          height: 60.h,
+          padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
+          decoration: BoxDecoration(
+            color: AppColors.light20,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: SvgPicture.asset(
+            'lib/core/assets/icons/Magicons/Glyph/User Interface/other.svg',
+            colorFilter: const ColorFilter.mode(
+              AppColors.light80,
+              BlendMode.srcIn,
+            ),
+          ),
+        );
+      default:
         return Container(
           width: 60.w,
           height: 60.h,

@@ -223,3 +223,16 @@ class GeneralAddNewPaymentSourceException extends AddNewPaymentSourceExceptions 
   const GeneralAddNewPaymentSourceException()
       : super(code: 'general-add-new-payment-source-error');
 }
+
+abstract class AddTransactionExceptions extends Exceptions {
+  const AddTransactionExceptions({required super.code});
+}
+
+class GeneralAddTransactionException extends AddTransactionExceptions {
+  const GeneralAddTransactionException()
+      : super(code: 'general-add-transaction-error');
+}
+
+class FirebaseStorageException extends Exceptions {
+  const FirebaseStorageException() : super(code: 'firebase-storage-error');
+}

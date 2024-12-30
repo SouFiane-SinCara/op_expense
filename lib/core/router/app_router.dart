@@ -14,6 +14,7 @@ import 'package:op_expense/core/widgets/onboarding_screen.dart';
 import 'package:op_expense/features/Authentication/presentation/screens/signup_screen.dart';
 import 'package:op_expense/features/Authentication/presentation/screens/verification_screen.dart';
 import 'package:op_expense/features/main/domain/entities/transaction.dart';
+import 'package:op_expense/features/main/presentation/cubits/transaction_cubit/transaction_cubit.dart';
 import 'package:op_expense/features/main/presentation/screens/add_new_account_screen.dart';
 import 'package:op_expense/features/main/presentation/screens/add_new_account_success_screen.dart';
 import 'package:op_expense/features/main/presentation/screens/add_transaction_screen.dart';
@@ -89,8 +90,11 @@ class RouterApp {
         );
       case RoutesName.addTransactionScreenName:
         return MaterialPageRoute(
-          builder: (context) => AddTransactionScreen(
-            transactionType: routeSettings.arguments as TransactionType,
+          builder: (context) => BlocProvider(
+            create: (context) => sl<TransactionCubit>(),
+            child: AddTransactionScreen(
+              transactionType: routeSettings.arguments as TransactionType,
+            ),
           ),
         );
       default:

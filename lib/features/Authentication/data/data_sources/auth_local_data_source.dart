@@ -23,6 +23,8 @@ class AuthLocalDataSourceImpl extends AuthLocalDataSource {
       final accountModel = AccountModel.fromJson(jsonAccount);
 
       return accountModel;
+    } on NoAccountLoggedException {
+      throw const NoAccountLoggedException();
     } catch (e) {
       throw const HiveStorageException();
     }
