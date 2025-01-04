@@ -64,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Navigator.pushNamedAndRemoveUntil(
                       context,
                       RoutesName.setupWalletScreenName,
-                      (route) => false,
+                      (route) => false, 
                     );
                   } else {
                     Navigator.pushNamedAndRemoveUntil(

@@ -11,5 +11,6 @@ abstract class MainRepository {
       {required Account account, required PaymentSource paymentSource});
   Future<Either<Failures, Unit>> addTransaction(
       {required Account account, required Transaction transaction});
-      
+  Future<Either<Failures, List<Transaction>>> getTransactions(
+      {required Account account});
 }

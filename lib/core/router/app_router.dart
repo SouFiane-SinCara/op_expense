@@ -6,15 +6,14 @@ import 'package:op_expense/features/Authentication/presentation/cubits/check_ema
 import 'package:op_expense/features/Authentication/presentation/cubits/forgot_password_cubit/forgot_password_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/login_cubit/login_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/send_email_verification_cubit/send_email_verification_cubit.dart';
-import 'package:op_expense/features/Authentication/presentation/cubits/sign_out_cubit/sign_out_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/screens/forgot_password_screen.dart';
 import 'package:op_expense/features/Authentication/presentation/screens/forgot_password_sent_screen.dart';
+import 'package:op_expense/features/Authentication/presentation/screens/initial_screen.dart';
 import 'package:op_expense/features/Authentication/presentation/screens/login_screen.dart';
 import 'package:op_expense/core/widgets/onboarding_screen.dart';
 import 'package:op_expense/features/Authentication/presentation/screens/signup_screen.dart';
 import 'package:op_expense/features/Authentication/presentation/screens/verification_screen.dart';
 import 'package:op_expense/features/main/domain/entities/transaction.dart';
-import 'package:op_expense/features/main/presentation/cubits/transaction_cubit/transaction_cubit.dart';
 import 'package:op_expense/features/main/presentation/screens/add_new_account_screen.dart';
 import 'package:op_expense/features/main/presentation/screens/add_new_account_success_screen.dart';
 import 'package:op_expense/features/main/presentation/screens/add_transaction_screen.dart';
@@ -24,17 +23,15 @@ import 'package:op_expense/features/main/presentation/screens/setup_wallet_scree
 class RouterApp {
   Route<dynamic>? onGenerateRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
+      case RoutesName.initialScreenName:
+        return MaterialPageRoute(
+            builder: (context) => BlocProvider(
+                  create: (context) => sl<LoginCubit>()..checkIfUserIsLogged(),
+                  child: const InitialScreen(),
+                ));
       case RoutesName.onboardingScreenName:
         return MaterialPageRoute(
-            builder: (context) => MultiBlocProvider(
-                  providers: [
-                    BlocProvider(
-                      create: (context) =>
-                          sl<LoginCubit>()..getLoggedInAccount(),
-                    ),
-                  ],
-                  child: const OnboardingScreen(),
-                ));
+            builder: (context) => const OnboardingScreen());
       case RoutesName.signUpScreenName:
         return MaterialPageRoute(
           builder: (context) => const SignupScreen(),
@@ -48,9 +45,6 @@ class RouterApp {
           builder: (context) => MultiBlocProvider(
             providers: [
               BlocProvider(
-                create: (context) => sl<SignOutCubit>(),
-              ),
-              BlocProvider(
                 create: (context) => sl<CheckEmailVerificationCubit>(),
               ),
               BlocProvider(
@@ -63,7 +57,10 @@ class RouterApp {
         );
       case RoutesName.homeScreenName:
         return MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
+          builder: (context) => BlocProvider(
+            create: (context) => sl<LoginCubit>()..getLoggedInAccount(),
+            child: const HomeScreen(),
+          ),
         );
       case RoutesName.forgotPasswordScreenName:
         return MaterialPageRoute(
@@ -90,11 +87,8 @@ class RouterApp {
         );
       case RoutesName.addTransactionScreenName:
         return MaterialPageRoute(
-          builder: (context) => BlocProvider(
-            create: (context) => sl<TransactionCubit>(),
-            child: AddTransactionScreen(
-              transactionType: routeSettings.arguments as TransactionType,
-            ),
+          builder: (context) => AddTransactionScreen(
+            transactionType: routeSettings.arguments as TransactionType,
           ),
         );
       default:

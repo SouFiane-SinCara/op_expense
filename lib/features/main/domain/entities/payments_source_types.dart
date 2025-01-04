@@ -36,8 +36,6 @@ extension PaymentsSourceExtensions on PaymentsSourceTypes {
         ];
       case PaymentsSourceTypes.cash:
         return [];
-      default:
-        return [];
     }
   }
 }
@@ -53,8 +51,6 @@ extension PaymentSourceTypesExtension on PaymentsSourceTypes {
         return 'Bank';
       case PaymentsSourceTypes.mobileWallet:
         return 'Mobile Wallet';
-      default:
-        return 'Cash';
     }
   }
 }

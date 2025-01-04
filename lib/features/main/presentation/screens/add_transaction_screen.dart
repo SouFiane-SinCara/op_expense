@@ -127,6 +127,17 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               if (state is TransactionFailure) {
                 showErrorSnackBar(context, state.message);
               } else if (state is TransactionSuccess) {
+                Navigator.pop(context);
+                context.read<PaymentSourcesCubit>().updatePaymentSourceBalance(
+                    chosenPaymentSource!.balance +
+                        (balanceController.text == ''
+                            ? 0
+                            : double.parse(balanceController.text) *
+                                (widget.transactionType ==
+                                        TransactionType.expense
+                                    ? (-1)
+                                    : (1))),
+                    chosenPaymentSource!);
                 showTransactionAddedSuccessfully(context);
               }
             },
@@ -267,8 +278,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                                                                 BoxShape.circle,
                                                             color: AppColors
                                                                 .light20
-                                                                .withOpacity(
-                                                                    0.8),
+                                                                .withAlpha(
+                                                                    (0.8 * 255).toInt()),
                                                           ),
                                                           //lib\core\assets\icons\Magicons\Glyph\User Interface\close.svg
                                                           child:
@@ -503,7 +514,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                                                     frequencyChosenMonth == null
                                                         ? null
                                                         : months.indexOf(
-                                                            frequencyChosenMonth!)+1,
+                                                                frequencyChosenMonth!) +
+                                                            1,
                                               ),
                                               account: account);
                                     }),

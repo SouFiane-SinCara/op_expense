@@ -16,4 +16,6 @@ abstract class AuthRepository {
   Future<Either<Failures, bool>> checkEmailVerification();
   Future<Either<Failures, Unit>> sendEmailVerification();
   Future<Either<Failures, Unit>> sendResetPassword(String email);
+
+  Future<Either<Failures, Unit>> checkIfUserIsLoggedLocally();
 }

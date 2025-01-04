@@ -5,7 +5,7 @@ class PaymentSource extends Equatable {
   final double balance;
   final String name;
   final PaymentsSourceTypes? type;
-  final String ?providerLogo;
+  final String? providerLogo;
   const PaymentSource({
     required this.providerLogo,
     required this.balance,
@@ -13,6 +13,19 @@ class PaymentSource extends Equatable {
     required this.type,
   });
 
+  PaymentSource copyWith({
+    double? balance,
+    String? name,
+    PaymentsSourceTypes? type,
+    String? providerLogo,
+  }) {
+    return PaymentSource(
+      balance: balance ?? this.balance,
+      name: name ?? this.name,
+      type: type ?? this.type,
+      providerLogo: providerLogo ?? this.providerLogo,
+    );
+  }
   @override
   List<Object?> get props => [balance, name, type, providerLogo];
 }

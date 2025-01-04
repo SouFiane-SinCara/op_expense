@@ -18,12 +18,12 @@ import 'package:op_expense/features/Authentication/presentation/cubits/login_cub
 import 'package:op_expense/features/Authentication/presentation/cubits/send_email_verification_cubit/send_email_verification_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/sign_out_cubit/sign_out_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/sign_up_cubit/sign_up_cubit.dart';
-import 'package:op_expense/features/main/data/data_sources/main_local_data_source.dart';
 import 'package:op_expense/features/main/data/data_sources/main_remote_data_source.dart';
 import 'package:op_expense/features/main/data/repositories_impl/main_repository_impl.dart';
 import 'package:op_expense/features/main/domain/repositories/main_repository.dart';
 import 'package:op_expense/features/main/domain/use_cases/add_new_payment_source_use_case.dart';
 import 'package:op_expense/features/main/domain/use_cases/add_transaction_use_case.dart';
+import 'package:op_expense/features/main/domain/use_cases/get_transactions_use_case.dart';
 import 'package:op_expense/features/main/presentation/cubits/payment_sources_cubit/payment_sources_cubit.dart';
 import 'package:op_expense/features/main/presentation/cubits/transaction_cubit/transaction_cubit.dart';
 
@@ -71,9 +71,9 @@ void setup() {
     //*-------- repository ----------
 
     ..registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(
-        mainLocalDataSource: sl(),
         authRemoteDataSource: sl(),
-        authLocalDataSource: sl()))
+        authLocalDataSource: sl(),
+        mainRemoteDataSource: sl()))
     //*-------- data source ----------
     ..registerLazySingleton<AuthLocalDataSource>(
       () => AuthLocalDataSourceImpl(),
@@ -113,6 +113,7 @@ void setup() {
     ..registerFactory(
       () => TransactionCubit(
         addTransactionUseCase: sl(),
+        getTransactionsUseCase: sl(),
       ),
     )
     //*-------- use case ----------
@@ -122,10 +123,12 @@ void setup() {
     ..registerLazySingleton(
       () => AddTransactionUseCase(mainRepository: sl()),
     )
+    ..registerLazySingleton(
+      () => GetTransactionsUseCase(mainRepository: sl()),
+    )
     //*-------- repository ----------
     ..registerLazySingleton<MainRepository>(
       () => MainRepositoryImpl(
-        mainLocalDataSource: sl(),
         mainRemoteDataSource: sl(),
       ),
     )
@@ -137,12 +140,10 @@ void setup() {
         firebaseStorage: sl(),
       ),
     )
-    ..registerLazySingleton<MainLocalDataSource>(
-      () => MainLocalDataSourceHive(),
-    )
+
     //*-------- services  ----------
     //some services already registered in the auth feature
     ..registerLazySingleton(
-      () => FirebaseStorage.instance, 
+      () => FirebaseStorage.instance,
     );
 }
