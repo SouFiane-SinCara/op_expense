@@ -1,3 +1,4 @@
+import 'package:op_expense/features/main/data/models/payment_source_model.dart';
 import 'package:op_expense/features/main/domain/entities/payment_source.dart';
 import 'package:op_expense/features/main/domain/entities/transaction.dart';
 
@@ -49,19 +50,22 @@ class TransactionModel extends Transaction {
 
   factory TransactionModel.fromJson(Map<String, dynamic> json) {
     return TransactionModel(
-      type: json['type'],
+      type: (json['type'] as String).toTransactionType,
       description: json['description'],
       frequencyDay: json['frequencyDay'],
       frequencyMonth: json['frequencyMonth'],
       amount: json['amount'],
-      createAt: json['date'],
-      paymentSource: json['paymentSource'],
-      category: json['category'],
+      createAt: DateTime.fromMillisecondsSinceEpoch(json['date']),
+      paymentSource: (json['paymentSource']) == null
+          ? null
+          : PaymentSourceModel.fromJson(json['paymentSource']),
+      category: (json['category'] as String).toCategory,
       repeat: json['repeat'],
-      attachment:
-          Attachment(file: json['attachmentFile'], url: json['attachmentUrl']),
-      frequency: json['frequency'],
-      frequencyEndDate: json['frequencyEndDate'],
+      attachment: Attachment(url: json['attachmentUrl']),
+      frequency: (json['frequency'] as String?).toFrequency,
+      frequencyEndDate: json['frequencyEndDate'] == null
+          ? null
+          : DateTime.fromMillisecondsSinceEpoch(json['frequencyEndDate']),
     );
   }
   factory TransactionModel.fromEntity(Transaction transaction) {
@@ -87,7 +91,9 @@ class TransactionModel extends Transaction {
       'description': super.description,
       'amount': super.amount,
       'date': super.createAt.millisecondsSinceEpoch,
-      'paymentSource': super.paymentSource?.name,
+      'paymentSource': super.paymentSource == null
+          ? null
+          : PaymentSourceModel.fromEntity(super.paymentSource!).toJson(),
       'category': super.category?.name,
       'repeat': super.repeat,
       'attachmentUrl': super.attachment?.url,

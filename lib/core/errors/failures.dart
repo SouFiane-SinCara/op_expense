@@ -320,3 +320,14 @@ class FirebaseStorageFailure extends Failures {
             message:
                 'An error occurred while trying to upload the attachment.');
 }
+
+abstract class GetTransactionsFailures extends Failures {
+  const GetTransactionsFailures({required super.message});
+}
+
+class GeneralGetTransactionsFailure extends GetTransactionsFailures {
+  const GeneralGetTransactionsFailure()
+      : super(
+            message:
+                'An unknown error occurred while trying to get transactions.');
+}

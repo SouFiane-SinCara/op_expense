@@ -3,15 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:op_expense/core/errors/failures.dart';
 import 'package:op_expense/core/helpers/app_extensions.dart';
 import 'package:op_expense/core/helpers/sized_boxes.dart';
 import 'package:op_expense/core/router/routes_name.dart';
 import 'package:op_expense/core/theme/app_colors.dart';
 import 'package:op_expense/core/theme/text_styles.dart';
+import 'package:op_expense/core/widgets/secondary_button.dart';
+import 'package:op_expense/features/Authentication/domain/entities/account.dart';
+import 'package:op_expense/features/Authentication/presentation/cubits/login_cubit/login_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/sign_out_cubit/sign_out_cubit.dart';
 import 'package:op_expense/features/main/presentation/cubits/payment_sources_cubit/payment_sources_cubit.dart';
 import 'package:op_expense/features/main/domain/entities/transaction.dart';
+import 'package:op_expense/features/main/presentation/cubits/transaction_cubit/transaction_cubit.dart';
 import 'package:op_expense/features/main/presentation/widgets/transaction_card.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,33 +27,143 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  double balance = 0;
+  double? balance;
+  double? income;
+  double? expense;
   int navigationIndex = 0;
-  String selectedDuration = 'Week';
-  bool dialogShow = false;
-  @override
-  void initState() {
-    balance = BlocProvider.of<PaymentSourcesCubit>(context).getBalance();
-    super.initState();
-  }
+  String selectedDuration = 'Today';
+  bool isDialogShown = false;
+  Account? account = const Account.empty();
 
   @override
   Widget build(BuildContext context) {
-    // Sample transactions for testing
     final DateTime currentTime = DateTime.now();
-    final List<Transaction> transactions = [];
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.light,
-        bottomNavigationBar: showBottomBar(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: showFloatingPlusButton(),
-        resizeToAvoidBottomInset: true,
-        body: showBody(
-          transactions,
-          currentTime,
+
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<LoginCubit, LoginState>(
+          listener: (context, loginState) async {
+            if (loginState is LoginSuccessState) {
+              account = loginState.account;
+              if (loginState.account.isVerified) {
+                await context
+                    .read<PaymentSourcesCubit>()
+                    .getPaymentSources(account: loginState.account);
+                await context.read<TransactionCubit>().getTransactions(
+                      account: account!,
+                    );
+              } else {
+                Navigator.pushReplacementNamed(
+                    context, RoutesName.verificationScreenName);
+              }
+            } else if (loginState is LoginFailureState) {
+              if (loginState.message != const NoInternetFailure().message) {
+                Navigator.pushReplacementNamed(
+                    context, RoutesName.onboardingScreenName);
+              }
+            }
+          },
         ),
-      ),
+        BlocListener<PaymentSourcesCubit, PaymentSourcesState>(
+          listener: (context, paymentSourcesState) {
+            if (paymentSourcesState is PaymentSourcesLoaded) {
+              if (paymentSourcesState.paymentSources.isEmpty) {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  RoutesName.setupWalletScreenName,
+                  (route) => false,
+                );
+              } else {
+                if (balance == null) {
+                  balance = 0;
+                } else {
+                  balance = paymentSourcesState.paymentSources
+                      .map((e) => e.balance)
+                      .reduce((a, b) => a + b);
+                }
+              }
+            }
+          },
+        ),
+        BlocListener<TransactionCubit, TransactionState>(
+          listener: (context, transactionState) {
+            if (transactionState is TransactionSuccess) {
+              income = 0;
+              expense = 0;
+              for (var element in transactionState.transactions) {
+                if (element.type == TransactionType.income) {
+                  income = income == null
+                      ? element.amount
+                      : (element.amount + income!);
+                } else {
+                  expense = expense == null
+                      ? element.amount
+                      : (element.amount + expense!);
+                }
+              }
+              income == null ? income = 0 : null;
+              expense == null ? expense = 0 : null;
+            }
+          },
+        )
+      ],
+      child: BlocBuilder<TransactionCubit, TransactionState>(
+          builder: (context, state) {
+        return BlocBuilder<LoginCubit, LoginState>(
+          builder: (context, loginState) {
+            if (loginState is LoginFailureState &&
+                loginState.message == const NoInternetFailure().message) {
+              return SafeArea(
+                child: Scaffold(
+                  body: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'No Internet Connection',
+                          style:
+                              TextStyles.w700Dark50.copyWith(fontSize: 20.sp),
+                        ),
+                        heightSizedBox(16),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: SecondaryButton(
+                            text: 'Retry',
+                            onPressed: () {
+                              BlocProvider.of<LoginCubit>(context)
+                                  .getLoggedInAccount();
+                            },
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }
+            return SafeArea(
+              child: ScaffoldMessenger(
+                child: Scaffold(
+                  backgroundColor: AppColors.light,
+                  bottomNavigationBar: showBottomBar(),
+                  floatingActionButtonLocation:
+                      FloatingActionButtonLocation.centerDocked,
+                  floatingActionButton: showFloatingPlusButton(),
+                  resizeToAvoidBottomInset: true,
+                  body: showBody(
+                    state is TransactionSuccess
+                        ? state.transactions
+                        : state is TransactionLoading
+                            ? [Transaction.empty(), Transaction.empty()]
+                            : null,
+                    currentTime,
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      }),
     );
   }
 
@@ -128,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   //!---------- body-----------
   SingleChildScrollView showBody(
-      List<Transaction> transactions, DateTime staticNow) {
+      List<Transaction>? transactions, DateTime staticNow) {
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -149,19 +265,24 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyles.w600Dark25.copyWith(fontSize: 24.sp),
                 ),
                 // see all button
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.violet20,
-                    borderRadius: BorderRadius.circular(16.r),
-                  ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 7.h,
-                  ),
-                  child: Text(
-                    'See All',
-                    style: TextStyles.w500Violet100.copyWith(
-                      fontSize: 14.sp,
+                GestureDetector(
+                  onTap: () {
+                    //TODO: navigate to all transactions screen
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.violet20,
+                      borderRadius: BorderRadius.circular(16.r),
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 7.h,
+                    ),
+                    child: Text(
+                      'See All',
+                      style: TextStyles.w500Violet100.copyWith(
+                        fontSize: 14.sp,
+                      ),
                     ),
                   ),
                 ),
@@ -169,26 +290,44 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           //!----------------- recent transactions -----------------
-          transactions.isEmpty
-              ? Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    heightSizedBox(100),
-                    Text(
-                      'No transactions yet',
-                      style: TextStyles.darkW500.copyWith(fontSize: 24.sp),
-                    ),
-                  ],
+          transactions == null || transactions.isNotEmpty
+              ? Skeletonizer(
+                  enabled: transactions == null,
+                  enableSwitchAnimation: true,
+                  child: Column(
+                    children: [
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: transactions == null
+                            ? 3
+                            : transactions.length > 3
+                                ? 3
+                                : transactions.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final transaction = transactions == null
+                              ? Transaction.empty()
+                              : transactions[index];
+                          return TransactionCard(transaction: transaction);
+                        },
+                      ),
+                      heightSizedBox(16),
+                    ],
+                  ),
                 )
-              : ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: transactions.length > 3 ? 3 : transactions.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final transaction = transactions[index];
-                    return TransactionCard(transaction: transaction);
-                  },
-                ),
+              : Container(
+                  height: 200.h,
+                  alignment: Alignment.center,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'No transactions yet',
+                        style: TextStyles.darkW500.copyWith(fontSize: 24.sp),
+                      ),
+                    ],
+                  ),
+                )
         ],
       ),
     );
@@ -206,7 +345,7 @@ class _HomeScreenState extends State<HomeScreen> {
             builder: (BuildContext context, setShowDialogState) {
               return GestureDetector(
                 onTap: () {
-                  dialogShow = true;
+                  isDialogShown = true;
                   setShowDialogState(() {});
                   showFloatingIncomeAndExpenseButtonsAfterPressingFloatedPlusButton(
                       context, setShowDialogState);
@@ -227,7 +366,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: 56.w,
                   child: SvgPicture.asset(
                     // lib\core\assets\icons\Magicons\Glyph\User Interface\close.svg
-                    dialogShow
+                    isDialogShown
                         ? 'lib/core/assets/icons/Magicons/Glyph/User Interface/close.svg'
                         : 'lib/core/assets/icons/Magicons/Outline/User Interface/add.svg',
                     colorFilter: const ColorFilter.mode(
@@ -246,20 +385,30 @@ class _HomeScreenState extends State<HomeScreen> {
 
   //!---------- spend frequency chart inside body-----------
   StatefulBuilder buildSpendFrequencyChartWithDurationControl(
-      List<Transaction> transactions, DateTime staticNow) {
+      List<Transaction>? transactions, DateTime staticNow) {
     return StatefulBuilder(
       builder: (BuildContext context, setSpendFrequencyDurationState) {
         List<FlSpot> spots = [];
-        for (var e in transactions) {
-          if ((staticNow.subtract(
-            Duration(
-              days: selectedDuration.durationToNumber(),
-            ),
-          )).isBefore(e.createAt)) {
-            spots.add(
-              FlSpot(spots.length.toDouble(), e.amount),
-            );
+        List<Transaction>? reversedTransactions =
+            transactions?.reversed.toList();
+
+        if (reversedTransactions != null) {
+          for (var e in reversedTransactions) {
+            if ((staticNow.subtract(
+              Duration(
+                days: selectedDuration.durationToNumber(),
+              ),
+            )).isBefore(e.createAt)) {
+              spots.add(
+                FlSpot(spots.length.toDouble(), e.amount),
+              );
+            }
           }
+        }
+        if (spots.isEmpty) {
+          spots = [const FlSpot(0, 0), const FlSpot(1, 0)];
+        } else if (spots.length == 1) {
+          spots.add(const FlSpot(-1, 0));
         }
         return spots.isEmpty
             ? const SizedBox.shrink()
@@ -482,13 +631,13 @@ class _HomeScreenState extends State<HomeScreen> {
           return PopScope(
             onPopInvokedWithResult: (didPop, result) {
               if (didPop) {
-                dialogShow = false;
+                isDialogShown = false;
                 setShowDialogState(() {});
               }
             },
             child: GestureDetector(
               onTap: () {
-                dialogShow = false;
+                isDialogShown = false;
                 setShowDialogState(() {});
                 Navigator.of(context).pop();
               },
@@ -564,7 +713,7 @@ class _HomeScreenState extends State<HomeScreen> {
         });
   }
 
-  Container buildBalanceIncomeExpense(double balance) {
+  Container buildBalanceIncomeExpense(double? balance) {
     return Container(
       decoration: const BoxDecoration(
         gradient: AppColors.linear1,
@@ -581,10 +730,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           heightSizedBox(9),
           // if for ex 200.0 type just number without '.0' like this 200
-          Text(
-            '\$${balance.toInt() == balance ? balance.toInt() : balance}',
-            style: TextStyles.w600Dark75.copyWith(
-              fontSize: 39.sp,
+          Skeletonizer(
+            enabled: balance == null,
+            enableSwitchAnimation: true,
+            child: Text(
+              balance == null ? '' : '\$${balance.formatNumber()}',
+              style: TextStyles.w600Dark75.copyWith(
+                fontSize: 39.sp,
+              ),
             ),
           ),
           heightSizedBox(27),
@@ -631,10 +784,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontSize: 14.sp,
                           ),
                         ),
-                        Text(
-                          '\$5000',
-                          style: TextStyles.w600Light80.copyWith(
-                            fontSize: 22.sp,
+                        Skeletonizer(
+                          enabled: income == null,
+                          child: Text(
+                            income == null
+                                ? '0'
+                                : // remove - sign from income and don't show .0 if it's integer
+                                '\$${income!.formatNumber()}',
+                            style: TextStyles.w600Light80.copyWith(
+                              fontSize: 22.sp,
+                            ),
                           ),
                         ),
                       ],
@@ -679,10 +838,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontSize: 14.sp,
                           ),
                         ),
-                        Text(
-                          '\$1200',
-                          style: TextStyles.w600Light80.copyWith(
-                            fontSize: 22.sp,
+                        Skeletonizer(
+                          enabled: expense == null,
+                          child: Text(
+                            // remove - sign from expense and don't show .0 if it's integer
+                            '\$${expense == null ? 0 : expense!.formatNumber()}',
+                            style: TextStyles.w600Light80.copyWith(
+                              fontSize: 22.sp,
+                            ),
                           ),
                         ),
                       ],

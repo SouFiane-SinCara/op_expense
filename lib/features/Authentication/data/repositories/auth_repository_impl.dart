@@ -6,17 +6,16 @@ import 'package:op_expense/features/Authentication/data/data_sources/auth_remote
 import 'package:op_expense/features/Authentication/data/models/account_model.dart';
 import 'package:op_expense/features/Authentication/domain/entities/account.dart';
 import 'package:op_expense/features/Authentication/domain/repositories/auth_repository.dart';
-import 'package:op_expense/features/main/data/data_sources/main_local_data_source.dart';
+import 'package:op_expense/features/main/data/data_sources/main_remote_data_source.dart';
 
 class AuthRepositoryImpl extends AuthRepository {
   final AuthRemoteDataSource authRemoteDataSource;
   final AuthLocalDataSource authLocalDataSource;
-  final MainLocalDataSource mainLocalDataSource;
-
+  final MainRemoteDataSource mainRemoteDataSource;
   AuthRepositoryImpl(
       {required this.authRemoteDataSource,
-      required this.mainLocalDataSource,
-      required this.authLocalDataSource});
+      required this.authLocalDataSource,
+      required this.mainRemoteDataSource});
 
   @override
   Future<Either<Failures, Account>> signUpWithEmailPassword(
@@ -105,7 +104,11 @@ class AuthRepositoryImpl extends AuthRepository {
   @override
   Future<Either<Failures, Account>> getLoggedInAccount() async {
     try {
-      AccountModel account = await authLocalDataSource.getAccount();
+      AccountModel account = await authRemoteDataSource.getLoggedUserAccount();
+      // check if there is any repeated transaction arrived while the user was offline and modify the account balance
+      await mainRemoteDataSource.checkIfRepeatedTransactionsArrived(
+          account: account);
+      // Update the last login time
       await authRemoteDataSource.updateLastLogin(account: account);
       return right(account);
     } on NoAccountLoggedException {
@@ -135,7 +138,6 @@ class AuthRepositoryImpl extends AuthRepository {
       await authRemoteDataSource.signOut();
       // Clear all local data maybe the user will login with a different account
       await authLocalDataSource.deleteAccount();
-      await mainLocalDataSource.removeAllPaymentSources();
       return right(unit);
     } on NoInternetException {
       return left(const NoInternetFailure());
@@ -186,6 +188,20 @@ class AuthRepositoryImpl extends AuthRepository {
       return left(const TooManyRequestsResetPasswordFailure());
     } catch (e) {
       return left(const GeneralResetPasswordFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failures, Unit>> checkIfUserIsLoggedLocally() async {
+    try {
+      await authLocalDataSource.checkIfUserIsLoggedLocally();
+      return right(unit);
+    } on NoAccountLoggedException {
+      return left(const NoAccountLoggedFailure());
+    } on HiveStorageException {
+      return left(const HiveStorageFailure());
+    } catch (e) {
+      return left(const NoAccountLoggedFailure());
     }
   }
 }

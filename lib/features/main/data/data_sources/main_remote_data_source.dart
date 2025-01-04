@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:op_expense/core/errors/exceptions.dart';
+import 'package:op_expense/features/Authentication/data/models/account_model.dart';
 import 'package:op_expense/features/Authentication/domain/entities/account.dart';
 import 'package:op_expense/features/main/data/models/payment_source_model.dart';
 import 'package:op_expense/features/main/data/models/transaction_model.dart';
@@ -18,6 +19,10 @@ abstract class MainRemoteDataSource {
   Future<void> addTransaction(
       {required Account account,
       required transaction_entity.Transaction transaction});
+  Future<List<TransactionModel>> getTransactions({required Account account});
+  // check if there is any repeated transaction arrived while the user was offline and modify the account balance
+  Future<void> checkIfRepeatedTransactionsArrived(
+      {required AccountModel account});
 }
 
 class MainRemoteDataSourceFirebase extends MainRemoteDataSource {
@@ -65,6 +70,7 @@ class MainRemoteDataSourceFirebase extends MainRemoteDataSource {
     } on NoInternetException {
       throw const NoInternetException();
     } catch (e) {
+      print(e);
       throw const GeneralGetPaymentSourcesException();
     }
   }
@@ -117,8 +123,15 @@ class MainRemoteDataSourceFirebase extends MainRemoteDataSource {
       if (transactionModel.repeat) {
         if (transactionModel.frequency == transaction_entity.Frequency.daily) {
           Duration oneDay = const Duration(days: 1);
-          DateTime createAt = transactionModel.createAt;
-          while (createAt.isBefore(transactionModel.frequencyEndDate!)) {
+
+          DateTime createAt = DateTime(
+            transactionModel.createAt.year,
+            transactionModel.createAt.month,
+            transactionModel.createAt.day,
+          );
+
+          while (createAt.isBefore(transactionModel.frequencyEndDate!) ||
+              createAt.day == transactionModel.frequencyEndDate!.day) {
             firebaseFirestore
                 .collection('users')
                 .doc(account.userId)
@@ -213,12 +226,97 @@ class MainRemoteDataSourceFirebase extends MainRemoteDataSource {
               transactionModel.toJson(),
             );
       }
+
+      // update payment source balance
+      final paymentSourceDocument = await firebaseFirestore
+          .collection('users')
+          .doc(account.userId)
+          .collection('wallet')
+          .where('name', isEqualTo: transactionModel.paymentSource!.name)
+          .get();
+      await paymentSourceDocument.docs.first.reference.update(
+        {
+          'balance':
+              transactionModel.paymentSource!.balance + transactionModel.amount,
+        },
+      );
     } on NoInternetException {
       throw const NoInternetException();
     } on FirebaseException {
       throw const FirebaseStorageException();
     } catch (e) {
       throw const GeneralAddTransactionException();
+    }
+  }
+
+  @override
+  Future<List<TransactionModel>> getTransactions(
+      {required Account account}) async {
+    
+    try {
+      await checkConnection();
+      List<TransactionModel> transactions = [];
+      final transactionsMap = await firebaseFirestore
+          .collection('users')
+          .doc(account.userId)
+          .collection('transactions')
+          .get();
+      for (var json in transactionsMap.docs) {
+        transactions.add(TransactionModel.fromJson(json.data()));
+      }
+      return transactions;
+    } on FirebaseException {
+      throw const GeneralFireStoreException();
+    } on NoInternetException {
+      throw const NoInternetException();
+    } catch (e) {
+      
+      throw const GeneralGetTransactionsException();
+    }
+  }
+
+  @override
+  Future<void> checkIfRepeatedTransactionsArrived(
+      {required AccountModel account}) async {
+    try {
+      await checkConnection();
+      List<TransactionModel> transactions =
+          await getTransactions(account: account);
+
+      for (var transaction in transactions) {
+        if (transaction.repeat &&
+            transaction.createAt.isBefore(DateTime.now()) &&
+            !(transaction.createAt.day ==
+                    DateTime.fromMillisecondsSinceEpoch(account.lastLogin)
+                        .day &&
+                transaction.createAt.month ==
+                    DateTime.fromMillisecondsSinceEpoch(account.lastLogin)
+                        .month &&
+                transaction.createAt.year ==
+                    DateTime.fromMillisecondsSinceEpoch(account.lastLogin)
+                        .year) &&
+            transaction.createAt.isAfter(
+                DateTime.fromMillisecondsSinceEpoch(account.lastLogin))) {
+          final paymentSourceDocument = firebaseFirestore
+              .collection('users')
+              .doc(account.userId)
+              .collection('wallet')
+              .where('name', isEqualTo: transaction.paymentSource!.name)
+              .get();
+          paymentSourceDocument.then((value) {
+            value.docs.first.reference.update(
+              {
+                'balance':
+                    value.docs.first.data()['balance'] + transaction.amount,
+              },
+            );
+          });
+        }
+      }
+    } on NoInternetException {
+      throw const NoInternetException();
+    } catch (e) {
+      throw const GeneralFireStoreException();
     }
   }
 }

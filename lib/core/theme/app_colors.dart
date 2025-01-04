@@ -60,8 +60,8 @@ class AppColors {
   );
   static Gradient linear2 = LinearGradient(
     colors: [
-      const Color(0xFF8B50FF).withOpacity(0.24),
-      const Color(0xFF8B50FF).withOpacity(0),
+      const Color(0xFF8B50FF).withAlpha((0.24 * 255).toInt()),
+      const Color(0xFF8B50FF).withAlpha((0 * 255).toInt()),
     ],
     begin: const Alignment(-0.06, -1.00),
     end: const Alignment(0.06, 1),

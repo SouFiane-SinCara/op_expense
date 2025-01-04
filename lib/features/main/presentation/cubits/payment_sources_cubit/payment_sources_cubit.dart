@@ -23,14 +23,27 @@ class PaymentSourcesCubit extends Cubit<PaymentSourcesState> {
     return paymentSourcesEither.fold(
       (failure) {
         emit(PaymentSourcesError(message: failure.message));
+        print('Error: ${failure.message}');
         return [];
       },
       (newPaymentSources) {
         paymentSources = newPaymentSources;
         emit(PaymentSourcesLoaded(paymentSources: newPaymentSources));
+        print('Payment sources: $paymentSources');
         return newPaymentSources;
       },
     );
+  }
+
+  void updatePaymentSourceBalance(
+      double newBalance, PaymentSource paymentSource) {
+    emit(PaymentSourcesLoading());
+    paymentSource = paymentSource.copyWith(balance: newBalance);
+    paymentSources.removeWhere((element) => element.name == paymentSource.name);
+
+    paymentSources = [...paymentSources, paymentSource];
+
+    emit(PaymentSourcesLoaded(paymentSources: paymentSources));
   }
 
   Future<void> addNewPaymentSource(

@@ -35,6 +35,9 @@ abstract class AuthRemoteDataSource {
 
   // method to update last login time
   Future<void> updateLastLogin({required AccountModel account});
+
+  // get logged user account
+  Future<AccountModel> getLoggedUserAccount();
 }
 
 // Implementation of AuthRemoteDataSource using Firebase
@@ -176,7 +179,7 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
           .collection("users")
           .doc(userCredential.user!.uid)
           .get();
-      print('email ${map.data()!["email"]}');
+
       AccountModel accountModel = AccountModel.fromJson(map.data()!);
 
       return accountModel;
@@ -293,6 +296,7 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
   Future<void> updateLastLogin({required AccountModel account}) async {
     try {
       await checkConnection();
+      // Update the last login time in Firestore
       await firebaseFirestore.collection('users').doc(account.userId).update(
         {
           "lastLogin": DateTime.now().millisecondsSinceEpoch,
@@ -300,6 +304,28 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
       );
     } on NoInternetException {
       throw const NoInternetException();
+    } catch (e) {
+      throw const GeneralFireStoreException();
+    }
+  }
+
+  @override
+  Future<AccountModel> getLoggedUserAccount() async {
+    try {
+      await checkConnection();
+      firebaseAuth.currentUser == null
+          ? throw const NoAccountLoggedException()
+          : null;
+      final jsonAccount = await firebaseFirestore
+          .collection('users')
+          .doc(firebaseAuth.currentUser!.uid)
+          .get();
+      AccountModel account = AccountModel.fromJson(jsonAccount.data()!);
+      return account;
+    } on NoInternetException {
+      throw const NoInternetException();
+    } on NoAccountLoggedException {
+      throw const NoAccountLoggedException();
     } catch (e) {
       throw const GeneralFireStoreException();
     }

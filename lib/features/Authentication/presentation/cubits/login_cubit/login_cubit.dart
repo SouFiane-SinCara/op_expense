@@ -36,6 +36,7 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future getLoggedInAccount() async {
+    
     emit(LoginLoadingState());
     await authRepository.getLoggedInAccount().then((result) {
       result.fold((fail) {
@@ -45,6 +46,16 @@ class LoginCubit extends Cubit<LoginState> {
         emit(
           LoginSuccessState(account: account),
         );
+      });
+    });
+  }
+
+  Future checkIfUserIsLogged() async {
+    await authRepository.checkIfUserIsLoggedLocally().then((result) {
+      result.fold((fail) {
+        emit(LoginFailureState(message: fail.message));
+      }, (unit) {
+        emit(LoginSuccessState(account: const Account.empty()));
       });
     });
   }

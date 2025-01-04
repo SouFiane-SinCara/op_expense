@@ -196,7 +196,6 @@ class UserNotFoundResetPasswordException extends ResetPasswordExceptions {
       : super(code: 'user-not-found-reset-password-error');
 }
 
-
 abstract class GetPaymentSourcesExceptions extends Exceptions {
   const GetPaymentSourcesExceptions({required super.code});
 }
@@ -207,19 +206,20 @@ class GeneralGetPaymentSourcesException extends GetPaymentSourcesExceptions {
 }
 
 class NoPaymentSourcesException extends GetPaymentSourcesExceptions {
-  const NoPaymentSourcesException()
-      : super(code: 'no-payment-sources-error');
+  const NoPaymentSourcesException() : super(code: 'no-payment-sources-error');
 }
 
 class NoPaymentSourcesLocallyException extends GetPaymentSourcesExceptions {
   const NoPaymentSourcesLocallyException()
       : super(code: 'no-payment-sources-localy-error');
 }
+
 abstract class AddNewPaymentSourceExceptions extends Exceptions {
   const AddNewPaymentSourceExceptions({required super.code});
 }
 
-class GeneralAddNewPaymentSourceException extends AddNewPaymentSourceExceptions {
+class GeneralAddNewPaymentSourceException
+    extends AddNewPaymentSourceExceptions {
   const GeneralAddNewPaymentSourceException()
       : super(code: 'general-add-new-payment-source-error');
 }
@@ -235,4 +235,13 @@ class GeneralAddTransactionException extends AddTransactionExceptions {
 
 class FirebaseStorageException extends Exceptions {
   const FirebaseStorageException() : super(code: 'firebase-storage-error');
+}
+
+abstract class GetTransactionsExceptions extends Exceptions {
+  const GetTransactionsExceptions({required super.code});
+}
+
+class GeneralGetTransactionsException extends GetTransactionsExceptions {
+  const GeneralGetTransactionsException()
+      : super(code: 'general-get-transactions-error');
 }

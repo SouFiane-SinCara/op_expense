@@ -11,19 +11,10 @@ class PaymentSourceModel extends PaymentSource {
   factory PaymentSourceModel.fromJson(Map json) {
     return PaymentSourceModel(
       providerLogo: json['providerLogo'],
-      balance: json['balance'],
+      balance: json['balance'] == 0 ? 0.0 : json['balance'].toDouble(),
       name: json['name'],
       type: (json['type'] as String).toPaymentsSourceTypes,
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'providerLogo': providerLogo,
-      'balance': balance,
-      'name': name,
-      'type': type.toString(),
-    };
   }
   factory PaymentSourceModel.fromEntity(PaymentSource paymentSource) {
     return PaymentSourceModel(
@@ -32,5 +23,13 @@ class PaymentSourceModel extends PaymentSource {
       name: paymentSource.name,
       type: paymentSource.type,
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'providerLogo': providerLogo,
+      'balance': balance,
+      'name': name,
+      'type': type.toString(),
+    };
   }
 }

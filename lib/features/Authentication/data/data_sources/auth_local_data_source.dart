@@ -7,6 +7,7 @@ abstract class AuthLocalDataSource {
   Future<void> cacheAccount(AccountModel accountModel);
   Future<void> deleteAccount();
   Future<void> verifyEmail();
+  Future checkIfUserIsLoggedLocally();
 }
 
 class AuthLocalDataSourceImpl extends AuthLocalDataSource {
@@ -55,6 +56,22 @@ class AuthLocalDataSourceImpl extends AuthLocalDataSource {
       account['isVerified'] = true;
       await accountBox.put(accountKey, account);
     } catch (e) {
+      throw const HiveStorageException();
+    }
+  }
+
+  @override
+  Future checkIfUserIsLoggedLocally() async {
+    try {
+      final json = await accountBox.get(accountKey);
+      if (json == null) {
+        throw const NoAccountLoggedException();
+      }
+    } on NoAccountLoggedException {
+      
+      throw const NoAccountLoggedException();
+    } catch (e) {
+      
       throw const HiveStorageException();
     }
   }

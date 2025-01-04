@@ -38,13 +38,13 @@ class TransactionCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                transaction.amount.toFormattedBalance(),
+                transaction.amount.formatNumber(),
                 style: transaction.amount.isNegative
                     ? TextStyles.w600Red.copyWith(fontSize: 16.sp)
                     : TextStyles.w600Green.copyWith(fontSize: 16.sp),
               ),
               Text(
-                DateFormat('HH:mm').format(transaction.createAt),
+                DateFormat('dd/MM/yyyy').format(transaction.createAt),
                 style: TextStyles.w500Light20.copyWith(fontSize: 13.sp),
               ),
             ],

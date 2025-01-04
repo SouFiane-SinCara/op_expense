@@ -7,6 +7,7 @@ import 'package:op_expense/core/theme/app_colors.dart';
 import 'package:op_expense/features/main/domain/entities/payment_source.dart';
 
 // Entity for transaction attachment
+// ignore: must_be_immutable
 class Attachment extends Equatable {
   XFile? file;
   String? url;
@@ -30,7 +31,19 @@ class Transaction extends Equatable {
   final int? frequencyMonth;
   final DateTime? frequencyEndDate;
   final Frequency? frequency;
-
+  Transaction.empty()
+      : type = TransactionType.expense,
+        description = '',
+        amount = 0.0,
+        createAt = DateTime.now(),
+        paymentSource = null,
+        attachment = null,
+        category = null,
+        repeat = false,
+        frequency = null,
+        frequencyDay = null,
+        frequencyMonth = null,
+        frequencyEndDate = null;
   const Transaction({
     required this.type,
     required this.description,
@@ -214,6 +227,51 @@ extension CategoryExtension on Category? {
             ),
           ),
         );
+    }
+  }
+}
+
+extension TransactionStingExtension on String? {
+  TransactionType get toTransactionType {
+    switch (this) {
+      case 'income':
+        return TransactionType.income;
+      case 'expense':
+        return TransactionType.expense;
+      default:
+        return TransactionType.expense;
+    }
+  }
+
+  Category get toCategory {
+    switch (this) {
+      case 'Food':
+        return Category.food;
+      case 'Transport':
+        return Category.transport;
+      case 'Shopping':
+        return Category.shopping;
+      case 'Subscription':
+        return Category.subscription;
+      case 'Salary':
+        return Category.salary;
+      case 'Others':
+        return Category.others;
+      default:
+        return Category.others;
+    }
+  }
+
+  Frequency? get toFrequency {
+    switch (this) {
+      case 'yearly':
+        return Frequency.yearly;
+      case 'monthly':
+        return Frequency.monthly;
+      case 'daily':
+        return Frequency.daily;
+      default:
+        return null;
     }
   }
 }
