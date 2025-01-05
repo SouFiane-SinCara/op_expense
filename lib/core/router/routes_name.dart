@@ -13,4 +13,5 @@ class RoutesName {
   static const String addNewAccountSuccessScreenName =
       "/AddNewAccountSuccessScreen";
   static const String addTransactionScreenName = "/AddTransactionScreen";
+  static const String transactionDetailsScreenName = "/TransactionDetailScreen";
 }

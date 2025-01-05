@@ -19,6 +19,7 @@ import 'package:op_expense/features/main/presentation/screens/add_new_account_su
 import 'package:op_expense/features/main/presentation/screens/add_transaction_screen.dart';
 import 'package:op_expense/features/main/presentation/screens/home_screen.dart';
 import 'package:op_expense/features/main/presentation/screens/setup_wallet_screen.dart';
+import 'package:op_expense/features/main/presentation/screens/transaction_details_screen.dart';
 
 class RouterApp {
   Route<dynamic>? onGenerateRoute(RouteSettings routeSettings) {
@@ -90,6 +91,11 @@ class RouterApp {
           builder: (context) => AddTransactionScreen(
             transactionType: routeSettings.arguments as TransactionType,
           ),
+        );
+      case RoutesName.transactionDetailsScreenName:
+        return MaterialPageRoute(
+          builder: (context) => TransactionDetailsScreen(
+              transaction: routeSettings.arguments as Transaction),
         );
       default:
         return MaterialPageRoute(

@@ -34,7 +34,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String selectedDuration = 'Today';
   bool isDialogShown = false;
   Account? account = const Account.empty();
-
   @override
   Widget build(BuildContext context) {
     final DateTime currentTime = DateTime.now();
@@ -73,14 +72,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   RoutesName.setupWalletScreenName,
                   (route) => false,
                 );
-              } else {
-                if (balance == null) {
-                  balance = 0;
-                } else {
-                  balance = paymentSourcesState.paymentSources
-                      .map((e) => e.balance)
-                      .reduce((a, b) => a + b);
-                }
               }
             }
           },
@@ -109,6 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
       child: BlocBuilder<TransactionCubit, TransactionState>(
           builder: (context, state) {
+        print('state: ${state.runtimeType}');
         return BlocBuilder<LoginCubit, LoginState>(
           builder: (context, loginState) {
             if (loginState is LoginFailureState &&
@@ -308,7 +300,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           final transaction = transactions == null
                               ? Transaction.empty()
                               : transactions[index];
-                          return TransactionCard(transaction: transaction);
+                          return GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pushNamed(
+                                  RoutesName.transactionDetailsScreenName,
+                                  arguments: transaction,
+                                );
+                              },
+                              child: TransactionCard(
+                                transaction: transaction,
+                              ));
                         },
                       ),
                       heightSizedBox(16),
@@ -730,15 +731,24 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           heightSizedBox(9),
           // if for ex 200.0 type just number without '.0' like this 200
-          Skeletonizer(
-            enabled: balance == null,
-            enableSwitchAnimation: true,
-            child: Text(
-              balance == null ? '' : '\$${balance.formatNumber()}',
-              style: TextStyles.w600Dark75.copyWith(
-                fontSize: 39.sp,
-              ),
-            ),
+          BlocBuilder<PaymentSourcesCubit, PaymentSourcesState>(
+            builder: (context, paymentSourcesState) {
+              if (paymentSourcesState is PaymentSourcesLoaded) {
+                balance = paymentSourcesState.paymentSources
+                    .map((e) => e.balance)
+                    .reduce((a, b) => a + b);
+              }
+              return Skeletonizer(
+                enabled: balance == null,
+                enableSwitchAnimation: true,
+                child: Text(
+                  balance == null ? '' : '\$${balance!.formatNumber()}',
+                  style: TextStyles.w600Dark75.copyWith(
+                    fontSize: 39.sp,
+                  ),
+                ),
+              );
+            },
           ),
           heightSizedBox(27),
           Row(

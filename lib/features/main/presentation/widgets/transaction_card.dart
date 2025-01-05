@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:op_expense/core/helpers/app_extensions.dart';
 import 'package:op_expense/core/helpers/sized_boxes.dart';
+import 'package:op_expense/core/theme/app_colors.dart';
 import 'package:op_expense/core/theme/text_styles.dart';
 import 'package:op_expense/features/main/domain/entities/transaction.dart';
 import 'package:intl/intl.dart';
@@ -13,6 +14,7 @@ class TransactionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: AppColors.light80,
       margin: EdgeInsets.symmetric(vertical: 10.h, horizontal: 20.w),
       child: Row(
         children: [
@@ -29,6 +31,7 @@ class TransactionCard extends StatelessWidget {
               Text(
                 transaction.description,
                 style: TextStyles.w500Light20.copyWith(fontSize: 13.sp),
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),

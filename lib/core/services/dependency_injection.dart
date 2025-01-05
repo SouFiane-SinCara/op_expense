@@ -112,6 +112,7 @@ void setup() {
     )
     ..registerFactory(
       () => TransactionCubit(
+        mainRepository: sl(),
         addTransactionUseCase: sl(),
         getTransactionsUseCase: sl(),
       ),

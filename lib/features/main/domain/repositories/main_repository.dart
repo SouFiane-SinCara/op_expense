@@ -13,4 +13,6 @@ abstract class MainRepository {
       {required Account account, required Transaction transaction});
   Future<Either<Failures, List<Transaction>>> getTransactions(
       {required Account account});
+  Future<Either<Failures, Unit>> deleteTransaction(
+      {required Account account, required Transaction transaction});
 }

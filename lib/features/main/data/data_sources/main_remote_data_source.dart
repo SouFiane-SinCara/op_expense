@@ -23,6 +23,9 @@ abstract class MainRemoteDataSource {
   // check if there is any repeated transaction arrived while the user was offline and modify the account balance
   Future<void> checkIfRepeatedTransactionsArrived(
       {required AccountModel account});
+  // remove Transaction from the firestore
+  Future<void> deleteTransaction(
+      {required Account account, required TransactionModel transaction});
 }
 
 class MainRemoteDataSourceFirebase extends MainRemoteDataSource {
@@ -101,6 +104,7 @@ class MainRemoteDataSourceFirebase extends MainRemoteDataSource {
       await checkConnection();
       TransactionModel transactionModel =
           TransactionModel.fromEntity(transaction);
+      transactionModel = transactionModel.copyWith(id: '');
       if (transactionModel.attachment != null &&
           transactionModel.attachment!.file != null) {
         // Get the file from the transaction model
@@ -119,7 +123,14 @@ class MainRemoteDataSourceFirebase extends MainRemoteDataSource {
         // Update the attachment url in the transaction model
         transactionModel.attachment!.url = downloadUrl;
       }
-
+      // generate a unique id doesn't exist in the firestore
+      String docId = firebaseFirestore
+          .collection('users')
+          .doc(account.userId)
+          .collection('transactions')
+          .doc()
+          .id;
+      transactionModel = transactionModel.copyWith(id: docId);
       if (transactionModel.repeat) {
         if (transactionModel.frequency == transaction_entity.Frequency.daily) {
           Duration oneDay = const Duration(days: 1);
@@ -139,6 +150,15 @@ class MainRemoteDataSourceFirebase extends MainRemoteDataSource {
                 .add(
                   transactionModel.copyWith(createAt: createAt).toJson(),
                 );
+            // generate a unique id doesn't exist in the firestore
+            docId = firebaseFirestore
+                .collection('users')
+                .doc(account.userId)
+                .collection('transactions')
+                .doc()
+                .id;
+            // update the transaction id
+            transactionModel = transactionModel.copyWith(id: docId);
             createAt = createAt.add(oneDay);
           }
         } else if (transactionModel.frequency ==
@@ -171,6 +191,15 @@ class MainRemoteDataSourceFirebase extends MainRemoteDataSource {
                       .copyWith(createAt: nextTransactionDate)
                       .toJson(),
                 );
+            // generate a unique id doesn't exist in the firestore
+            docId = firebaseFirestore
+                .collection('users')
+                .doc(account.userId)
+                .collection('transactions')
+                .doc()
+                .id;
+            // update the transaction id
+            transactionModel = transactionModel.copyWith(id: docId);
             // Move to the next month
             createAt = DateTime(year, month + 1, 1); // Start of the next month
           }
@@ -211,7 +240,15 @@ class MainRemoteDataSourceFirebase extends MainRemoteDataSource {
                       .copyWith(createAt: nextTransactionDate)
                       .toJson(),
                 );
-
+            // update the transaction id
+            transactionModel = transactionModel.copyWith(id: docId);
+            // generate a unique id doesn't exist in the firestore
+            docId = firebaseFirestore
+                .collection('users')
+                .doc(account.userId)
+                .collection('transactions')
+                .doc()
+                .id;
             // Move to the next year
             createAt = DateTime(
                 year + 1, month, 1); // Start of the same month in the next year
@@ -252,7 +289,6 @@ class MainRemoteDataSourceFirebase extends MainRemoteDataSource {
   @override
   Future<List<TransactionModel>> getTransactions(
       {required Account account}) async {
-    
     try {
       await checkConnection();
       List<TransactionModel> transactions = [];
@@ -270,7 +306,6 @@ class MainRemoteDataSourceFirebase extends MainRemoteDataSource {
     } on NoInternetException {
       throw const NoInternetException();
     } catch (e) {
-      
       throw const GeneralGetTransactionsException();
     }
   }
@@ -313,6 +348,41 @@ class MainRemoteDataSourceFirebase extends MainRemoteDataSource {
           });
         }
       }
+    } on NoInternetException {
+      throw const NoInternetException();
+    } catch (e) {
+      throw const GeneralFireStoreException();
+    }
+  }
+
+  @override
+  Future<void> deleteTransaction(
+      {required Account account, required TransactionModel transaction}) async {
+    try {
+      await checkConnection();
+      //get the transaction or transaction
+      final transactions = await firebaseFirestore
+          .collection('users')
+          .doc(account.userId)
+          .collection('transactions')
+          .where('id', isEqualTo: transaction.id)
+          .get();
+      transactions.docs.first.reference.delete();
+      // update the payment source balance
+      final paymentSourceDocument = await firebaseFirestore
+          .collection('users')
+          .doc(account.userId)
+          .collection('wallet')
+          .where('name', isEqualTo: transaction.paymentSource!.name)
+          .get();
+      await paymentSourceDocument.docs.first.reference.update(
+        {
+          'balance': PaymentSourceModel.fromJson(
+                      paymentSourceDocument.docs.first.data())
+                  .balance -
+              transaction.amount,
+        },
+      );
     } on NoInternetException {
       throw const NoInternetException();
     } catch (e) {
