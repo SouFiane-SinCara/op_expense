@@ -331,3 +331,14 @@ class GeneralGetTransactionsFailure extends GetTransactionsFailures {
             message:
                 'An unknown error occurred while trying to get transactions.');
 }
+
+abstract class DeleteTransactionFailures extends Failures {
+  const DeleteTransactionFailures({required super.message});
+}
+
+class GeneralDeleteTransactionFailure extends DeleteTransactionFailures {
+  const GeneralDeleteTransactionFailure()
+      : super(
+            message:
+                'An unknown error occurred while trying to delete the transaction.');
+}

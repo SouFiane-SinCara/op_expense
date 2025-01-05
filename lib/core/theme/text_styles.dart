@@ -22,6 +22,10 @@ class TextStyles {
       fontFamily: fontFamily,
       color: AppColors.light80,
       fontWeight: FontWeight.w600);
+  static const TextStyle w600Light20 = TextStyle(
+      fontFamily: fontFamily,
+      color: AppColors.light20,
+      fontWeight: FontWeight.w600);
   static const TextStyle w600Violet20 = TextStyle(
       fontFamily: fontFamily,
       color: AppColors.violet100,
@@ -45,6 +49,10 @@ class TextStyles {
   static const TextStyle w700Light20 = TextStyle(
       fontFamily: fontFamily,
       color: AppColors.light20,
+      fontWeight: FontWeight.w700);
+  static const TextStyle w700Light80 = TextStyle(
+      fontFamily: fontFamily,
+      color: AppColors.light80,
       fontWeight: FontWeight.w700);
   static const TextStyle w700red100 = TextStyle(
       fontFamily: fontFamily,

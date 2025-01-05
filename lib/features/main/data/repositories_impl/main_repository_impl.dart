@@ -4,6 +4,7 @@ import 'package:op_expense/core/errors/failures.dart';
 import 'package:op_expense/features/Authentication/domain/entities/account.dart';
 import 'package:op_expense/features/main/data/data_sources/main_remote_data_source.dart';
 import 'package:op_expense/features/main/data/models/payment_source_model.dart';
+import 'package:op_expense/features/main/data/models/transaction_model.dart';
 import 'package:op_expense/features/main/domain/entities/payment_source.dart';
 import 'package:op_expense/features/main/domain/entities/transaction.dart';
 import 'package:op_expense/features/main/domain/repositories/main_repository.dart';
@@ -79,6 +80,21 @@ class MainRepositoryImpl extends MainRepository {
       return left(const GeneralGetTransactionsFailure());
     } catch (e) {
       return left(const GeneralGetTransactionsFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failures, Unit>> deleteTransaction(
+      {required Account account, required Transaction transaction}) async {
+    try {
+      await mainRemoteDataSource.deleteTransaction(
+          account: account,
+          transaction: TransactionModel.fromEntity(transaction));
+      return right(unit);
+    } on NoInternetException {
+      return left(const NoInternetFailure());
+    } catch (e) {
+      return left(const GeneralDeleteTransactionFailure());
     }
   }
 }

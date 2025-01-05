@@ -18,6 +18,7 @@ import 'package:op_expense/core/widgets/app_switch.dart';
 import 'package:op_expense/core/widgets/app_text_form_field.dart';
 import 'package:op_expense/core/widgets/my_app_bar.dart';
 import 'package:op_expense/core/widgets/primary_button.dart';
+import 'package:op_expense/core/widgets/show_success_dialog.dart';
 import 'package:op_expense/core/widgets/snack_bars.dart';
 import 'package:op_expense/features/Authentication/domain/entities/account.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/authentication_cubit/authentication_cubit.dart';
@@ -278,8 +279,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                                                                 BoxShape.circle,
                                                             color: AppColors
                                                                 .light20
-                                                                .withAlpha(
-                                                                    (0.8 * 255).toInt()),
+                                                                .withAlpha((0.8 *
+                                                                        255)
+                                                                    .toInt()),
                                                           ),
                                                           //lib\core\assets\icons\Magicons\Glyph\User Interface\close.svg
                                                           child:
@@ -535,34 +537,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   //!----------------- Show transaction added successfully -------------------
   Future<dynamic> showTransactionAddedSuccessfully(BuildContext context) {
-    return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-          content: Container(
-        padding: EdgeInsets.symmetric(
-          vertical: 16.h,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SvgPicture.asset(
-              'lib/core/assets/icons/Magicons/Glyph/User Interface/success.svg',
-              width: 50.w,
-              height: 50.h,
-              colorFilter:
-                  const ColorFilter.mode(Color(0xFF5233FF), BlendMode.srcIn),
-            ),
-            const FittedBox(
-              child: Text(
-                'Transaction has been successfully added',
-                style: TextStyles.darkW500,
-              ),
-            ),
-          ],
-        ),
-      )),
-    );
+    return showSuccessDialog(
+        context, 'Transaction has been successfully added');
   }
 
   //!----------------- Display frequency options -------------------

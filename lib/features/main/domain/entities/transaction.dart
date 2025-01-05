@@ -16,9 +16,9 @@ class Attachment extends Equatable {
   @override
   List<Object?> get props => [file, url];
 }
-
-// ignore: must_be_immutable
+ 
 class Transaction extends Equatable {
+  final String? id;
   final String description;
   final double amount;
   final TransactionType type;
@@ -33,6 +33,7 @@ class Transaction extends Equatable {
   final Frequency? frequency;
   Transaction.empty()
       : type = TransactionType.expense,
+        id = '',
         description = '',
         amount = 0.0,
         createAt = DateTime.now(),
@@ -45,6 +46,7 @@ class Transaction extends Equatable {
         frequencyMonth = null,
         frequencyEndDate = null;
   const Transaction({
+    this.id,
     required this.type,
     required this.description,
     required this.amount,
@@ -64,6 +66,7 @@ class Transaction extends Equatable {
         description,
         amount,
         type,
+        id,
         createAt,
         paymentSource,
         attachment,

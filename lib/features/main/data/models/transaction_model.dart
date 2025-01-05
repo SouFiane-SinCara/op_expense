@@ -5,6 +5,7 @@ import 'package:op_expense/features/main/domain/entities/transaction.dart';
 class TransactionModel extends Transaction {
   const TransactionModel({
     required super.type,
+    super.id,
     required super.description,
     required super.amount,
     required super.createAt,
@@ -19,6 +20,7 @@ class TransactionModel extends Transaction {
   });
 
   TransactionModel copyWith({
+    String? id,
     TransactionType? type,
     String? description,
     double? amount,
@@ -34,6 +36,7 @@ class TransactionModel extends Transaction {
   }) {
     return TransactionModel(
       type: type ?? super.type,
+      id: id ?? super.id,
       description: description ?? super.description,
       amount: amount ?? super.amount,
       frequencyDay: frequencyDay ?? super.frequencyDay,
@@ -51,6 +54,7 @@ class TransactionModel extends Transaction {
   factory TransactionModel.fromJson(Map<String, dynamic> json) {
     return TransactionModel(
       type: (json['type'] as String).toTransactionType,
+      id: json['id'],
       description: json['description'],
       frequencyDay: json['frequencyDay'],
       frequencyMonth: json['frequencyMonth'],
@@ -70,6 +74,7 @@ class TransactionModel extends Transaction {
   }
   factory TransactionModel.fromEntity(Transaction transaction) {
     return TransactionModel(
+      id: transaction.id,
       frequencyDay: transaction.frequencyDay,
       frequencyMonth: transaction.frequencyMonth,
       type: transaction.type,
@@ -88,6 +93,7 @@ class TransactionModel extends Transaction {
   Map<String, dynamic> toJson() {
     return {
       'type': super.type.name,
+      'id': super.id,
       'description': super.description,
       'amount': super.amount,
       'date': super.createAt.millisecondsSinceEpoch,

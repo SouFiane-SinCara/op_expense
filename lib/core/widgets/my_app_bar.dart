@@ -16,6 +16,7 @@ AppBar myAppBar({
 }) {
   return AppBar(
     actions: actions,
+    elevation: 0,
     backgroundColor: backgroundColor ?? AppColors.light,
     leadingWidth: 48.w,
     leading: Navigator.of(context).canPop()
