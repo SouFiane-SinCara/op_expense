@@ -23,7 +23,9 @@ import 'package:op_expense/features/main/data/repositories_impl/main_repository_
 import 'package:op_expense/features/main/domain/repositories/main_repository.dart';
 import 'package:op_expense/features/main/domain/use_cases/add_new_payment_source_use_case.dart';
 import 'package:op_expense/features/main/domain/use_cases/add_transaction_use_case.dart';
+import 'package:op_expense/features/main/domain/use_cases/filter_transactions_use_case.dart';
 import 'package:op_expense/features/main/domain/use_cases/get_transactions_use_case.dart';
+import 'package:op_expense/features/main/presentation/cubits/filter_transactions_cubit/filter_transactions_cubit.dart';
 import 'package:op_expense/features/main/presentation/cubits/payment_sources_cubit/payment_sources_cubit.dart';
 import 'package:op_expense/features/main/presentation/cubits/transaction_cubit/transaction_cubit.dart';
 
@@ -117,6 +119,9 @@ void setup() {
         getTransactionsUseCase: sl(),
       ),
     )
+    ..registerFactory(
+      () => FilterTransactionsCubit(filterTransactionsUseCase: sl()),
+    )
     //*-------- use case ----------
     ..registerLazySingleton(
       () => AddNewPaymentSourceUseCase(mainRepository: sl()),
@@ -126,6 +131,9 @@ void setup() {
     )
     ..registerLazySingleton(
       () => GetTransactionsUseCase(mainRepository: sl()),
+    )
+    ..registerLazySingleton(
+      () => FilterTransactionsUseCase(),
     )
     //*-------- repository ----------
     ..registerLazySingleton<MainRepository>(

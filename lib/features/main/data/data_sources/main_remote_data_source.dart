@@ -73,7 +73,6 @@ class MainRemoteDataSourceFirebase extends MainRemoteDataSource {
     } on NoInternetException {
       throw const NoInternetException();
     } catch (e) {
-      print(e);
       throw const GeneralGetPaymentSourcesException();
     }
   }
