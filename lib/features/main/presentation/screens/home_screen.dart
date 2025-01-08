@@ -16,6 +16,7 @@ import 'package:op_expense/features/Authentication/presentation/cubits/sign_out_
 import 'package:op_expense/features/main/presentation/cubits/payment_sources_cubit/payment_sources_cubit.dart';
 import 'package:op_expense/features/main/domain/entities/transaction.dart';
 import 'package:op_expense/features/main/presentation/cubits/transaction_cubit/transaction_cubit.dart';
+import 'package:op_expense/features/main/presentation/screens/transactions_screen.dart';
 import 'package:op_expense/features/main/presentation/widgets/transaction_card.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -48,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 await context
                     .read<PaymentSourcesCubit>()
                     .getPaymentSources(account: loginState.account);
+                // ignore: use_build_context_synchronously
                 await context.read<TransactionCubit>().getTransactions(
                       account: account!,
                     );
@@ -100,7 +102,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
       child: BlocBuilder<TransactionCubit, TransactionState>(
           builder: (context, state) {
-        print('state: ${state.runtimeType}');
         return BlocBuilder<LoginCubit, LoginState>(
           builder: (context, loginState) {
             if (loginState is LoginFailureState &&
@@ -142,14 +143,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       FloatingActionButtonLocation.centerDocked,
                   floatingActionButton: showFloatingPlusButton(),
                   resizeToAvoidBottomInset: true,
-                  body: showBody(
-                    state is TransactionSuccess
-                        ? state.transactions
-                        : state is TransactionLoading
-                            ? [Transaction.empty(), Transaction.empty()]
-                            : null,
-                    currentTime,
-                  ),
+                  body: navigationIndex == 0
+                      ? showBody(
+                          state is TransactionSuccess
+                              ? state.transactions
+                              : state is TransactionLoading
+                                  ? [Transaction.empty(), Transaction.empty()]
+                                  : null,
+                          currentTime,
+                        )
+                      : navigationIndex == 1
+                          ? const TransactionsScreen()
+                          : Container(),
                 ),
               ),
             );
@@ -166,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return BottomNavigationBar(
           currentIndex: navigationIndex,
           onTap: (index) {
-            setNavigationState(() {
+            setState(() {
               navigationIndex = index;
             });
           },
@@ -174,6 +179,8 @@ class _HomeScreenState extends State<HomeScreen> {
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
                 'lib/core/assets/icons/Magicons/Glyph/User Interface/home.svg',
+                height: 32.h,
+                width: 32.w,
                 colorFilter: ColorFilter.mode(
                   navigationIndex != 0
                       ? AppColors.light20
@@ -185,6 +192,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
+                height: 32.h,
+                width: 32.w,
                 'lib/core/assets/icons/Magicons/Glyph/Finance/transaction.svg',
                 colorFilter: ColorFilter.mode(
                   navigationIndex != 1
@@ -197,7 +206,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
-                'lib/core/assets/icons/Magicons/Glyph/Finance/pie-chart.svg',
+                'lib/core/assets/icons/Magicons/Glyph/User Interface/chat.svg',
+                height: 32.h,
+                width: 32.w,
                 colorFilter: ColorFilter.mode(
                   navigationIndex != 2
                       ? AppColors.light20
@@ -205,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   BlendMode.srcIn,
                 ),
               ),
-              label: 'Budget',
+              label: 'AI Guide',
             ),
             BottomNavigationBarItem(
               icon: GestureDetector(
@@ -214,6 +225,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 child: SvgPicture.asset(
                   'lib/core/assets/icons/Magicons/Glyph/Ecommerce & Shopping/user.svg',
+                  height: 32.h,
+                  width: 32.w,
                   colorFilter: ColorFilter.mode(
                     navigationIndex != 3
                         ? AppColors.light20
@@ -259,7 +272,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 // see all button
                 GestureDetector(
                   onTap: () {
-                    //TODO: navigate to all transactions screen
+                    navigationIndex = 1;
+                    setState(() {});
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -358,7 +372,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.violet100.withOpacity(0.5),
+                        color:
+                            AppColors.violet100.withAlpha((0.5 * 255).toInt()),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -625,7 +640,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void showFloatingIncomeAndExpenseButtonsAfterPressingFloatedPlusButton(
       BuildContext context, StateSetter setShowDialogState) {
     showDialog(
-        barrierColor: AppColors.violet10.withOpacity(0.1),
+        barrierColor: AppColors.violet10.withAlpha((0.1 * 255).toInt()),
         context: context,
         barrierDismissible: true,
         builder: (BuildContext context) {

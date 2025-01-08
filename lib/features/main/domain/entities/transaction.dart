@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:op_expense/core/theme/app_colors.dart';
 import 'package:op_expense/features/main/domain/entities/payment_source.dart';
+import 'package:op_expense/features/main/presentation/screens/transactions_screen.dart';
 
 // Entity for transaction attachment
 // ignore: must_be_immutable
@@ -16,7 +18,7 @@ class Attachment extends Equatable {
   @override
   List<Object?> get props => [file, url];
 }
- 
+
 class Transaction extends Equatable {
   final String? id;
   final String description;
@@ -276,5 +278,33 @@ extension TransactionStingExtension on String? {
       default:
         return null;
     }
+  }
+}
+
+extension ListOfTransactionsExtension on List<Transaction> {
+  List<TransactionsHaveSameDay> groupTransactionsByDate() {
+    List<TransactionsHaveSameDay> groupedTransactions = [];
+
+    for (var transaction in this) {
+      String date = transaction.createAt.day == DateTime.now().day &&
+              transaction.createAt.month == DateTime.now().month &&
+              transaction.createAt.year == DateTime.now().year
+          ? 'Today'
+          : DateFormat('dd MMMM yyyy').format(transaction.createAt);
+      // check if groupedTransactions has TransactionsHaveSameDay.date == date
+      if (groupedTransactions.any((element) => element.day == date)) {
+        groupedTransactions
+            .firstWhere((element) => element.day == date)
+            .transactions
+            .add(transaction);
+      } else {
+        groupedTransactions.add(TransactionsHaveSameDay(
+          day: date,
+          transactions: [transaction],
+        ));
+      }
+    }
+
+    return groupedTransactions;
   }
 }
