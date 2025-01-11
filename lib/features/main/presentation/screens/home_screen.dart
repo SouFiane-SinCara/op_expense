@@ -10,6 +10,7 @@ import 'package:op_expense/core/router/routes_name.dart';
 import 'package:op_expense/core/theme/app_colors.dart';
 import 'package:op_expense/core/theme/text_styles.dart';
 import 'package:op_expense/core/widgets/secondary_button.dart';
+import 'package:op_expense/features/AiGuide/presentation/screens/ai_guide_screen.dart';
 import 'package:op_expense/features/Authentication/domain/entities/account.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/login_cubit/login_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/sign_out_cubit/sign_out_cubit.dart';
@@ -141,7 +142,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   bottomNavigationBar: showBottomBar(),
                   floatingActionButtonLocation:
                       FloatingActionButtonLocation.centerDocked,
-                  floatingActionButton: showFloatingPlusButton(),
+                  floatingActionButton:
+                      navigationIndex == 0 ? showFloatingPlusButton() : null,
                   resizeToAvoidBottomInset: true,
                   body: navigationIndex == 0
                       ? showBody(
@@ -154,7 +156,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         )
                       : navigationIndex == 1
                           ? const TransactionsScreen()
-                          : Container(),
+                          : navigationIndex == 2
+                              ? AiGuideScreen()
+                              : Container(),
                 ),
               ),
             );
