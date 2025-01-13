@@ -157,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       : navigationIndex == 1
                           ? const TransactionsScreen()
                           : navigationIndex == 2
-                              ? AiGuideScreen()
+                              ? const AiGuideScreen()
                               : Container(),
                 ),
               ),

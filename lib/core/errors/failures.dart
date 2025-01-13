@@ -342,3 +342,26 @@ class GeneralDeleteTransactionFailure extends DeleteTransactionFailures {
             message:
                 'An unknown error occurred while trying to delete the transaction.');
 }
+
+abstract class SendMessageFailures extends Failures {
+  const SendMessageFailures({required super.message});
+}
+
+class NoApiKeyFailure extends SendMessageFailures {
+  const NoApiKeyFailure()
+      : super(message: 'No API key found. Please contact support.');
+}
+
+class ApiTooManyRequestsFailure extends SendMessageFailures {
+  const ApiTooManyRequestsFailure()
+      : super(
+            message:
+                'Too many requests have been made. Please wait and try again later.');
+}
+
+class GeneralSendMessageFailure extends SendMessageFailures {
+  const GeneralSendMessageFailure()
+      : super(
+            message:
+                'An unknown error occurred while trying to send the message.');
+}

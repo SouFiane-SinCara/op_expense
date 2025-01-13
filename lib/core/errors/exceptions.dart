@@ -245,3 +245,19 @@ class GeneralGetTransactionsException extends GetTransactionsExceptions {
   const GeneralGetTransactionsException()
       : super(code: 'general-get-transactions-error');
 }
+
+abstract class SendMessageExceptions extends Exceptions {
+  const SendMessageExceptions({required super.code});
+}
+
+class NoApiKeyException extends SendMessageExceptions {
+  const NoApiKeyException() : super(code: 'no-api-key-error');
+}
+
+class GeneralApiException extends SendMessageExceptions {
+  const GeneralApiException() : super(code: 'general-api-error');
+}
+
+class ApiTooManyRequestsException extends SendMessageExceptions {
+  const ApiTooManyRequestsException() : super(code: '429');
+}

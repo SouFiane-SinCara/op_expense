@@ -49,7 +49,7 @@ class MainRemoteDataSourceFirebase extends MainRemoteDataSource {
       {required Account account}) async {
     try {
       // Check internet connection before making the request if no internet throw NoInternetException
-      checkConnection();
+    await  checkConnection();
       // Get the payment sources from firebase firestore using the account userId
       final walletCollection = await firebaseFirestore
           .collection('users')
@@ -82,7 +82,7 @@ class MainRemoteDataSourceFirebase extends MainRemoteDataSource {
       {required Account account,
       required PaymentSourceModel paymentSource}) async {
     try {
-      checkConnection();
+      await checkConnection();
       await firebaseFirestore
           .collection('users')
           .doc(account.userId)
