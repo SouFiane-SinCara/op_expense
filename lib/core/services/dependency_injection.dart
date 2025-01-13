@@ -4,6 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:op_expense/features/AiGuide/data/data_sources/ai_guide_remote_data_source.dart';
+import 'package:op_expense/features/AiGuide/data/repositories/ai_guide_repository_impl.dart';
+import 'package:op_expense/features/AiGuide/domain/repositories/ai_guide_repository.dart';
+import 'package:op_expense/features/AiGuide/presentation/cubits/ai_guide_cubit/ai_guide_cubit.dart';
 import 'package:op_expense/features/Authentication/data/data_sources/auth_local_data_source.dart';
 import 'package:op_expense/features/Authentication/data/data_sources/auth_remote_data_source.dart';
 import 'package:op_expense/features/Authentication/data/repositories/auth_repository_impl.dart';
@@ -28,6 +32,7 @@ import 'package:op_expense/features/main/domain/use_cases/get_transactions_use_c
 import 'package:op_expense/features/main/presentation/cubits/filter_transactions_cubit/filter_transactions_cubit.dart';
 import 'package:op_expense/features/main/presentation/cubits/payment_sources_cubit/payment_sources_cubit.dart';
 import 'package:op_expense/features/main/presentation/cubits/transaction_cubit/transaction_cubit.dart';
+import 'package:http/http.dart' as http;
 
 GetIt sl = GetIt.instance;
 void setup() {
@@ -154,5 +159,32 @@ void setup() {
     //some services already registered in the auth feature
     ..registerLazySingleton(
       () => FirebaseStorage.instance,
+    )
+
+    //!------------ AI Guide feature --------------
+    //*-------- controller ----------
+    ..registerFactory(
+      () => AiGuideCubit(
+        aiGuideRepository: sl(),
+      ),
+    )
+
+    //*-------- repository ----------
+    ..registerLazySingleton<AiGuideRepository>(
+      () => AiGuideRepositoryImpl(
+        remoteDataSource: sl(),
+      ),
+    )
+    //*-------- data source ----------
+    ..registerLazySingleton<AiGuideRemoteDataSource>(
+      () => GeminiAiGuideRemoteDataSource(
+        connectivity: sl(),
+        client: sl(),
+      ),
+    )
+
+    //*-------- services  ----------
+    ..registerLazySingleton(
+      () => http.Client(),
     );
 }

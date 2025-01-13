@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:op_expense/core/router/app_router.dart';
 import 'package:op_expense/core/services/dependency_injection.dart';
+import 'package:op_expense/features/AiGuide/presentation/cubits/ai_guide_cubit/ai_guide_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/authentication_cubit/authentication_cubit.dart';
 import 'package:op_expense/features/main/presentation/cubits/payment_sources_cubit/payment_sources_cubit.dart';
 import 'package:op_expense/features/main/presentation/cubits/transaction_cubit/transaction_cubit.dart';
@@ -20,7 +21,7 @@ Future<void> main() async {
   await Hive.initFlutter();
   // open account box
   await Hive.openBox('account');
-  
+
   // Run the app
   runApp(DevicePreview(
       enabled: false, builder: (context) => const OpExpenseApp()));

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:op_expense/core/helpers/sized_boxes.dart';
+import 'package:op_expense/core/router/routes_name.dart';
 import 'package:op_expense/core/services/dependency_injection.dart';
 import 'package:op_expense/core/theme/app_colors.dart';
 import 'package:op_expense/core/theme/text_styles.dart';
@@ -139,8 +140,18 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                                       Column(
                                         children: transactions.transactions
                                             .map((transaction) =>
-                                                TransactionCard(
-                                                  transaction: transaction,
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.of(context)
+                                                        .pushNamed(
+                                                      RoutesName
+                                                          .transactionDetailsScreenName,
+                                                      arguments: transaction,
+                                                    );
+                                                  },
+                                                  child: TransactionCard(
+                                                    transaction: transaction,
+                                                  ),
                                                 ))
                                             .toList(),
                                       ),

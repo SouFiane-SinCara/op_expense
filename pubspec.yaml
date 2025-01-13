@@ -21,6 +21,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.6
+  flutter_dotenv: ^5.2.1
   flutter_native_splash: ^2.4.2
   flutter_screenutil: ^5.9.3
   flutter_svg: ^2.0.14
@@ -35,6 +36,7 @@ dependencies:
   skeletonizer: ^1.4.2
   smooth_page_indicator: ^1.2.0+3
   url_launcher: ^6.3.1
+  http: ^1.2.2
 
 dev_dependencies:
   build_runner: ^2.4.13
@@ -59,6 +61,7 @@ flutter:
     - lib/core/assets/icons/Magicons/Glyph/Ecommerce & Shopping/
     - lib/core/assets/icons/Magicons/Glyph/Travel/
     - lib/core/assets/icons/Magicons/Glyph/Communication/
+    - gemini_key.env
 
   fonts:
     - family: Inter

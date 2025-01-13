@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:op_expense/core/router/routes_name.dart';
 import 'package:op_expense/core/services/dependency_injection.dart';
+import 'package:op_expense/features/AiGuide/presentation/cubits/ai_guide_cubit/ai_guide_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/check_email_verification_cubit/check_email_verification_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/forgot_password_cubit/forgot_password_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/login_cubit/login_cubit.dart';
@@ -58,8 +59,15 @@ class RouterApp {
         );
       case RoutesName.homeScreenName:
         return MaterialPageRoute(
-          builder: (context) => BlocProvider(
-            create: (context) => sl<LoginCubit>()..getLoggedInAccount(),
+          builder: (context) => MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) => sl<LoginCubit>()..getLoggedInAccount(),
+              ),
+              BlocProvider(
+                create: (context) => sl<AiGuideCubit>(),
+              ),
+            ],
             child: const HomeScreen(),
           ),
         );
