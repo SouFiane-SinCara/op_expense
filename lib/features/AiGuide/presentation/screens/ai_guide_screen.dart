@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:op_expense/core/helpers/sized_boxes.dart';
+import 'package:op_expense/core/services/dependency_injection.dart';
 import 'package:op_expense/core/theme/app_colors.dart';
 import 'package:op_expense/core/theme/text_styles.dart';
 import 'package:op_expense/core/widgets/app_text_form_field.dart';
@@ -102,7 +103,7 @@ class _AiGuideScreenState extends State<AiGuideScreen> {
               Expanded(
                 flex: 1,
                 child: GestureDetector(
-                  onTap: () async {
+                  onTap: () {
                     BlocProvider.of<AiGuideCubit>(context).sendMessage(
                       transactions:
                           context.read<TransactionCubit>().transactions,
