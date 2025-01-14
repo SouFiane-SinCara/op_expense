@@ -8,13 +8,12 @@ extension DoubleExtension on double {
     }
     if (abs() >= 1e9) return '${(this / 1e9).toStringAsFixed(1)}B'; // Billion
     if (abs() >= 1e6) return '${(this / 1e6).toStringAsFixed(1)}M'; // Million
-    if (abs() >= 1e3) return '${(this / 1e3).toStringAsFixed(1)}K'; // Thousand
     return toStringAsFixed(
         this == toInt() ? 0 : 2); // Show decimals only if needed
   }
 }
 
-extension StringExtension on String { 
+extension StringExtension on String {
   int durationToNumber() {
     switch (this) {
       case 'Today':

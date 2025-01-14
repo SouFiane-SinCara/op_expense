@@ -95,9 +95,15 @@ class _AiGuideScreenState extends State<AiGuideScreen> {
             children: [
               Expanded(
                 flex: 3,
-                child: AppTextFormField(
-                  hintText: 'Ask suggestion',
-                  controller: userInputController,
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxHeight: 200.h,
+                  ),
+                  child: AppTextFormField(
+                    hintText: 'Ask suggestion',
+                    textInputAction: TextInputAction.newline,
+                    controller: userInputController,
+                  ),
                 ),
               ),
               Expanded(
