@@ -239,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   BlendMode.srcIn,
                 ),
               ),
-              label: 'Profile',
+              label: 'Sign Out',
             ),
           ],
           selectedItemColor: AppColors.violet100,
