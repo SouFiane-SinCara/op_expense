@@ -32,6 +32,14 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
       textInputAction: widget.textInputAction ?? TextInputAction.done,
       //! don't show password if showPassword is false and the secureTextFormField is true
       obscureText: widget.secureTextFormField == true && showPassword == false,
+      //! these next three lines for the multiline text field like the message field in the ai guide screen
+      maxLines: widget.textInputAction == TextInputAction.newline ? null : 1,
+      scrollPhysics: widget.textInputAction == TextInputAction.newline
+          ? const BouncingScrollPhysics()
+          : null,
+      keyboardType: widget.textInputAction == TextInputAction.newline
+          ? TextInputType.multiline
+          : null,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
         hintText: widget.hintText,
