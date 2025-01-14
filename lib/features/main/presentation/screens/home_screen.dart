@@ -140,28 +140,28 @@ class _HomeScreenState extends State<HomeScreen> {
             return SafeArea(
               child: ScaffoldMessenger(
                 child: Scaffold(
-                  backgroundColor: AppColors.light,
-                  bottomNavigationBar: showBottomBar(),
-                  floatingActionButtonLocation:
-                      FloatingActionButtonLocation.centerDocked,
-                  floatingActionButton:
-                      navigationIndex == 0 ? showFloatingPlusButton() : null,
-                  resizeToAvoidBottomInset: true,
-                  body: navigationIndex == 0
-                      ? showBody(
-                          state is TransactionSuccess
-                              ? state.transactions
-                              : state is TransactionLoading
-                                  ? [Transaction.empty(), Transaction.empty()]
-                                  : null,
-                          currentTime,
-                        )
-                      : navigationIndex == 1
-                          ? const TransactionsScreen()
-                          : navigationIndex == 2
-                              ? const AiGuideScreen()
-                              : Container(),
-                ),
+                    backgroundColor: AppColors.light,
+                    bottomNavigationBar: showBottomBar(),
+                    floatingActionButtonLocation:
+                        FloatingActionButtonLocation.centerDocked,
+                    floatingActionButton:
+                        navigationIndex == 0 ? showFloatingPlusButton() : null,
+                    resizeToAvoidBottomInset: true,
+                    body: navigationIndex == 1
+                        ? const TransactionsScreen()
+                        : navigationIndex == 2
+                            ? const AiGuideScreen()
+                            : showBody(
+                                state is TransactionSuccess
+                                    ? state.transactions
+                                    : state is TransactionLoading
+                                        ? [
+                                            Transaction.empty(),
+                                            Transaction.empty()
+                                          ]
+                                        : null,
+                                currentTime,
+                              )),
               ),
             );
           },
@@ -177,6 +177,9 @@ class _HomeScreenState extends State<HomeScreen> {
         return BottomNavigationBar(
           currentIndex: navigationIndex,
           onTap: (index) {
+            if (index == 3) {
+              showSignOutDialog(context);
+            }
             setState(() {
               navigationIndex = index;
             });
@@ -225,23 +228,18 @@ class _HomeScreenState extends State<HomeScreen> {
               label: 'AI Guide',
             ),
             BottomNavigationBarItem(
-              icon: GestureDetector(
-                onLongPress: () async {
-                  await BlocProvider.of<SignOutCubit>(context).signOut();
-                },
-                child: SvgPicture.asset(
-                  'lib/core/assets/icons/Magicons/Glyph/Ecommerce & Shopping/user.svg',
-                  height: 32.h,
-                  width: 32.w,
-                  colorFilter: ColorFilter.mode(
-                    navigationIndex != 3
-                        ? AppColors.light20
-                        : AppColors.violet100,
-                    BlendMode.srcIn,
-                  ),
+              icon: SvgPicture.asset(
+                'lib/core/assets/icons/Magicons/Glyph/User Interface/logout.svg',
+                height: 32.h,
+                width: 32.w,
+                colorFilter: ColorFilter.mode(
+                  navigationIndex != 3
+                      ? AppColors.light20
+                      : AppColors.violet100,
+                  BlendMode.srcIn,
                 ),
               ),
-              label: 'Profile',
+              label: 'Sign Out',
             ),
           ],
           selectedItemColor: AppColors.violet100,
@@ -250,6 +248,47 @@ class _HomeScreenState extends State<HomeScreen> {
           type: BottomNavigationBarType.fixed,
         );
       },
+    );
+  }
+
+  Future<dynamic> showSignOutDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) => BlocProvider(
+        create: (context) => sl<SignOutCubit>(),
+        child: Builder(
+          builder: (context) => AlertDialog(
+            title: const Text('Sign Out'),
+            content: const Text('Are you sure you want to sign out?'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Cancel'),
+              ),
+              BlocListener<SignOutCubit, SignOutState>(
+                listener: (context, signOutState) {
+                  if (signOutState is SignOutSuccess) {
+                    Navigator.pop(context);
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      RoutesName.onboardingScreenName,
+                      (route) => false,
+                    );
+                  }
+                },
+                child: TextButton(
+                  onPressed: () {
+                    context.read<SignOutCubit>().signOut();
+                  },
+                  child: const Text('Sign Out'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
