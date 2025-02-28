@@ -115,6 +115,9 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
       throw const GeneralFireStoreException();
     } on HiveError {
       throw const HiveStorageException();
+    }catch (e) {
+       print('fError'+e.toString());  
+       throw const GeneralFireStoreException();
     }
   }
 
@@ -155,6 +158,7 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
     } on HiveError {
       throw const HiveStorageException();
     } catch (e) {
+      print('fError'+e.toString());
       throw GeneralSignInWithGoogleException();
     }
   }

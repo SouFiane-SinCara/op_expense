@@ -64,6 +64,8 @@ class _SignupScreenState extends State<SignupScreen> {
           ),
           body: BlocConsumer<SignUpCubit, SignUpState>(
             listener: (context, state) async {
+              print('fError: ${state}');
+
               if (state is SignUpWithEmailPasswordSuccessState) {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
