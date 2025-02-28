@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1085575491495-8nbjo6ape9is920a440ep2ijso23arkn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.op_expense",
+            "certificate_hash": "cdd077760dc76612d0377ea7953e64f1b5394cc3"
+          }
+        },
+        {
           "client_id": "1085575491495-c4jlnf8qd9kioi72u05gj2sqbvfnto4r.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +37,73 @@
             {
               "client_id": "1085575491495-c4jlnf8qd9kioi72u05gj2sqbvfnto4r.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "1085575491495-u9vmk6gudragt83ns39v1ni9uu5nnemh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.opExpense"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1085575491495:android:3290c873a8d19886b61082",
+        "android_client_info": {
+          "package_name": "com.opExpense.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1085575491495-56fa02tpqe9u4ufq2rugg6j91i49tsj6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.opExpense.app",
+            "certificate_hash": "4e3fe26fb21ea1b1923f9cf068fdb50b7932976c"
+          }
+        },
+        {
+          "client_id": "1085575491495-5ps58v24cmago2he5mq0ien1vliumo7f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.opExpense.app",
+            "certificate_hash": "cdd077760dc76612d0377ea7953e64f1b5394cc3"
+          }
+        },
+        {
+          "client_id": "1085575491495-v02npkbo2bfjfmne2u4gvvt45m4f10di.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.opExpense.app",
+            "certificate_hash": "ab696eae49837c5302f379af947a9b087b7c4536"
+          }
+        },
+        {
+          "client_id": "1085575491495-c4jlnf8qd9kioi72u05gj2sqbvfnto4r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlO3Nj8cB8sT2DX1HExG79309zmtQ-Edc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1085575491495-c4jlnf8qd9kioi72u05gj2sqbvfnto4r.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1085575491495-u9vmk6gudragt83ns39v1ni9uu5nnemh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.opExpense"
+              }
             }
           ]
         }

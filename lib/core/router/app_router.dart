@@ -7,6 +7,7 @@ import 'package:op_expense/features/Authentication/presentation/cubits/check_ema
 import 'package:op_expense/features/Authentication/presentation/cubits/forgot_password_cubit/forgot_password_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/login_cubit/login_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/cubits/send_email_verification_cubit/send_email_verification_cubit.dart';
+import 'package:op_expense/features/Authentication/presentation/cubits/sign_out_cubit/sign_out_cubit.dart';
 import 'package:op_expense/features/Authentication/presentation/screens/forgot_password_screen.dart';
 import 'package:op_expense/features/Authentication/presentation/screens/forgot_password_sent_screen.dart';
 import 'package:op_expense/features/Authentication/presentation/screens/initial_screen.dart';
@@ -48,6 +49,9 @@ class RouterApp {
             providers: [
               BlocProvider(
                 create: (context) => sl<CheckEmailVerificationCubit>(),
+              ),
+              BlocProvider(
+                create: (context) => sl<SignOutCubit>(),
               ),
               BlocProvider(
                 create: (context) =>
