@@ -58,6 +58,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1085575491495-122rf9do36sokgp06cjcsq9720ee2aga.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.opExpense.app",
+            "certificate_hash": "1ec08ad9862bec42854343bd6e74c4ef52bc8e5d"
+          }
+        },
+        {
           "client_id": "1085575491495-56fa02tpqe9u4ufq2rugg6j91i49tsj6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

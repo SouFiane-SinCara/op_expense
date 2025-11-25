@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:op_expense/features/AiGuide/data/data_sources/ai_guide_remote_data_source.dart';
@@ -32,7 +33,6 @@ import 'package:op_expense/features/main/domain/use_cases/get_transactions_use_c
 import 'package:op_expense/features/main/presentation/cubits/filter_transactions_cubit/filter_transactions_cubit.dart';
 import 'package:op_expense/features/main/presentation/cubits/payment_sources_cubit/payment_sources_cubit.dart';
 import 'package:op_expense/features/main/presentation/cubits/transaction_cubit/transaction_cubit.dart';
-import 'package:http/http.dart' as http;
 
 GetIt sl = GetIt.instance;
 void setup() {
@@ -179,12 +179,10 @@ void setup() {
     ..registerLazySingleton<AiGuideRemoteDataSource>(
       () => GeminiAiGuideRemoteDataSource(
         connectivity: sl(),
-        client: sl(),
+        gemini: sl(),
       ),
     )
 
     //*-------- services  ----------
-    ..registerLazySingleton(
-      () => http.Client(),
-    );
+    ..registerLazySingleton(() => Gemini.instance);
 }

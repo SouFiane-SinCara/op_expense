@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:op_expense/core/helpers/sized_boxes.dart';
@@ -173,7 +174,7 @@ class _AiGuideScreenState extends State<AiGuideScreen> {
           margin: EdgeInsets.symmetric(vertical: 16.h),
           padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
           constraints: BoxConstraints(
-            maxWidth: 250.w,
+            maxWidth: 290.w,
           ),
           decoration: BoxDecoration(
             color: role == Role.user ? AppColors.violet40 : AppColors.violet20,
@@ -186,9 +187,19 @@ class _AiGuideScreenState extends State<AiGuideScreen> {
                   role == Role.user ? Radius.zero : const Radius.circular(16),
             ),
           ),
-          child: Text(
-            message,
-            style: TextStyles.darkW500.copyWith(fontSize: 16.sp),
+          child: MarkdownBody(
+            data: message,
+            selectable: true, // optional: allow copy/paste
+            styleSheet: MarkdownStyleSheet(
+              p: TextStyles.darkW500.copyWith(fontSize: 11.sp),
+              h1: TextStyles.darkW500
+                  .copyWith(fontSize: 13.sp, fontWeight: FontWeight.bold),
+              h2: TextStyles.darkW500
+                  .copyWith(fontSize: 12.sp, fontWeight: FontWeight.bold),
+              h3: TextStyles.darkW500
+                  .copyWith(fontSize: 11.sp, fontWeight: FontWeight.bold),
+              listBullet: TextStyles.darkW500.copyWith(fontSize: 11.sp),
+            ),
           ),
         ),
         if (role == Role.user)
