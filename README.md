@@ -24,6 +24,14 @@ This app was created to:
 
 ---
 
+## Download
+
+You can download **OpExpense** directly from the Google Play Store:
+
+[![Get it on Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png)](https://play.google.com/store/apps/details?id=com.opExpense.app)
+
+---
+
 ## Tech Stack
 OpExpense is built with the following technologies:
 - **Frontend**: Flutter (Dart)
@@ -106,7 +114,6 @@ To run this app locally, follow these steps:
   <img src="https://github.com/user-attachments/assets/9d64be59-63d2-4ce9-96cd-e92acdb16107" alt="Screenshot 28" width="200">
 </details>
 
-
 ---
 
 ## Contribution
@@ -120,4 +127,3 @@ Contributions are welcome! If you’d like to contribute:
 ## Contact
 For questions, feedback, or contributions, feel free to contact me:
 - **Email**: [soufiane.selouan.dev@gmail.com](mailto:soufiane.selouan.dev@gmail.com)
-

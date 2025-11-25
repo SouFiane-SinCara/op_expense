@@ -92,6 +92,7 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
 
       return accountModel;
     } on FirebaseAuthException catch (authError) {
+      
       // Handle Firebase Auth exceptions
       switch (authError.code) {
         case "email-already-in-use":
@@ -115,9 +116,9 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
       throw const GeneralFireStoreException();
     } on HiveError {
       throw const HiveStorageException();
-    }catch (e) {
-       print('fError'+e.toString());  
-       throw const GeneralFireStoreException();
+    } catch (e) {
+      print('fError' + e.toString());
+      throw const GeneralFireStoreException();
     }
   }
 
@@ -158,7 +159,7 @@ class AuthFireBaseRemoteDataSource extends AuthRemoteDataSource {
     } on HiveError {
       throw const HiveStorageException();
     } catch (e) {
-      print('fError'+e.toString());
+      print('fError' + e.toString());
       throw GeneralSignInWithGoogleException();
     }
   }

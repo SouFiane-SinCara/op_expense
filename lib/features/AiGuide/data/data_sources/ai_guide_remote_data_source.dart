@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:op_expense/core/errors/exceptions.dart';
@@ -19,10 +19,10 @@ abstract class AiGuideRemoteDataSource {
 
 class GeminiAiGuideRemoteDataSource implements AiGuideRemoteDataSource {
   final Connectivity connectivity;
-  final http.Client client;
+  final Gemini gemini;
 
   GeminiAiGuideRemoteDataSource(
-      {required this.connectivity, required this.client});
+      {required this.connectivity, required this.gemini});
 
   // Method to check internet connection
   Future checkConnection() async {
@@ -38,67 +38,58 @@ class GeminiAiGuideRemoteDataSource implements AiGuideRemoteDataSource {
       required List<TransactionModel> transactions,
       required List<PaymentSourceModel> paymentSources}) async {
     try {
-      // Check if there is an internet connection
       await checkConnection();
-      // Load the API key from the .env file
-      await dotenv.load(fileName: "gemini_key.env");
 
-      // Get the API key
-      final String? apiKey = dotenv.env['GEMINI_API_KEY'];
+      // Build context prompt from your domain data
+      final String contextPrompt = '''
+You are an AI financial guide inside an expense tracking app.
+Use the following data (transactions + wallets) to give personalized insights.
 
-      if (apiKey == null || apiKey.isEmpty) {
-        throw const NoApiKeyException();
-      }
-      // how can i show all this print message in terminal ?
+Current time: ${DateTime.now()}
 
-      // Define Gemini endpoint
-      String endPoint =
-          "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=$apiKey";
-      // Define the body of the request
-      final body = json.encode({
-        "contents": [
-          MessageModel(role: Role.user, message: '''
-        this is my expenses and transactions data :
-        ${transactions.map((e) => e.toJson()).toList()},
+Wallets:
+${paymentSources.map((e) => e.toJson()).toList()}
 
-        current time : ${DateTime.now()}
+Transactions:
+${transactions.map((e) => e.toJson()).toList()}
+''';
 
-        wallet : ${paymentSources.map((e) => e.toJson()).toList()}
-
-      ''').toJson(),
-          messages
-              .map(
-                (e) => e.toJson(),
-              )
-              .toList(),
-        ],
-        "generationConfig": {
-          "temperature": 0.1,
-          "topK": 40,
-          "topP": 0.95,
-          "maxOutputTokens": 8192,
-          "responseMimeType": "text/plain"
-        }
-      });
-      // Make the API request
-      final response = await client.post(
-        Uri.parse(endPoint),
-        body: body,
+      // Last user message (assuming your MessageModel has role + message)
+      final MessageModel lastUserMessage = messages.lastWhere(
+        (m) => m.role == Role.user,
+        orElse: () => MessageModel(role: Role.user, message: ''),
       );
 
-      if (response.statusCode == 200) {
-        // If the server returns an OK response, parse the JSON
-        final Map<String, dynamic> data = jsonDecode(response.body);
+      // Combine context + user question
+      final String fullUserText = '''
+$contextPrompt
 
-        return MessageModel(
-            role: Role.model,
-            message: data['candidates'][0]['content']['parts'][0]['text']);
-      } else if (response.statusCode == 429) {
-        throw const ApiTooManyRequestsException();
-      } else {
-        // If the server returns an error response, throw an exception
+User message:
+${lastUserMessage.message}
+''';
+
+      // DEBUG: see what you send
+      print('AI request prompt:\n$fullUserText');
+
+      // Call Gemini (non-stream)
+      final response = await gemini.text(
+        fullUserText,
+      );
+
+      if (response == null ||
+          response.output == null ||
+          response.output!.isEmpty) {
         throw const GeneralApiException();
       }
+
+      final String reply = response.output!;
+
+      print('AI response:\n$reply');
+
+      return MessageModel(
+        role: Role.model,
+        message: reply,
+      );
     } on NoInternetException {
       throw const NoInternetException();
     } on NoApiKeyException {

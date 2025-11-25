@@ -1,7 +1,7 @@
 name: op_expense
 description: "A new Flutter project."
 publish_to: 'none'
-version: 10.0.0
+version: 12.0.0
 
 environment:
   sdk: ^3.5.4
@@ -22,7 +22,9 @@ dependencies:
     sdk: flutter
   flutter_bloc: ^9.0.0
   flutter_dotenv: ^5.2.1
+  flutter_gemini: ^3.0.0
   flutter_launcher_icons: ^0.14.2
+  flutter_markdown: ^0.7.7+1
   flutter_native_splash: ^2.4.2
   flutter_screenutil: ^5.9.3
   flutter_svg: ^2.0.14
@@ -33,9 +35,9 @@ dependencies:
   hive_flutter: ^1.1.0
   http: ^1.2.2
   image_picker: ^1.1.2
-  intl: ^0.19.0
+  intl: ^0.20.2
   meta: ^1.7.0
-  skeletonizer: ^1.4.2
+  skeletonizer: ^2.1.0+1
   smooth_page_indicator: ^1.2.0+3
   url_launcher: ^6.3.1
 
